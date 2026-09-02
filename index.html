@@ -206,6 +206,7 @@ select{
 .d.busy{background:var(--paper); border-color:var(--rule); box-shadow:var(--shadow)}
 .d.busy .dn{color:var(--ink); font-weight:500}
 .d.today{outline:2px solid var(--acento); outline-offset:-1px}
+.d.feriado .dn::after{content:"•"; margin-left:.15em; color:var(--ink-2); font-weight:700}
 .d.gone{opacity:.35}
 .d .ec{
   font-size:.6rem; font-weight:600; line-height:1.25; border-radius:2px;
@@ -297,7 +298,7 @@ select{
       <button type="button" data-view="cal" class="is-on">Calendário</button>
       <button type="button" data-view="lista">Lista</button>
     </div>
-    <p class="legend" id="legend"><span><i class="l1"></i>1ª fase</span><span><i class="l2"></i>2ª fase</span><span id="legenda-cnj" hidden><b class="semcnj">*</b> fora do painel do CNJ</span></p>
+    <p class="legend" id="legend"><span><i class="l1"></i>1ª fase</span><span><i class="l2"></i>2ª fase</span><span id="legenda-cnj" hidden><b class="semcnj">*</b> fora do painel do CNJ</span><span><b class="semcnj">•</b> feriado</span></p>
   </div>
 
   <div class="filters" hidden id="filters">

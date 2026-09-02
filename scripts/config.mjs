@@ -36,7 +36,9 @@ export const COLUNAS_DATA = [
   "3º Etapa início",
   "3º Etapa fim",
   "4º Etapa início",
-  "4º Etapa fim"
+  "4º Etapa fim",
+  "5º Etapa início",
+  "5º Etapa fim"
 ];
 
 const UF = {

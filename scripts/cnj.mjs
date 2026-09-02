@@ -75,7 +75,13 @@ export async function lerPainel() {
 
 async function umaLeitura() {
   const browser = await chromium.launch();
-  const page = await browser.newPage({ locale: "pt-BR" });
+  /* Janela larga de propósito: o Qlik virtualiza colunas na horizontal. Em
+     1280px ele renderiza só as 13 primeiras e as etapas 4ª fim e 5ª somem do
+     DOM sem qualquer erro — o robô lia a tabela achando que estava completa. */
+  const page = await browser.newPage({
+    locale: "pt-BR",
+    viewport: { width: 1920, height: 1080 }
+  });
   const resultado = { atualizadoEm: new Date().toISOString(), abas: {}, avisos: [] };
 
   try {

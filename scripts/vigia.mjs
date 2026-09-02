@@ -70,7 +70,10 @@ if (antes) {
     const velho = antes.get(id);
     if (!velho) { concursosNovos.push(c); continue; }
     for (const col of COLUNAS_DATA) {
-      const a = (velho[col] ?? "").trim(), b = (c[col] ?? "").trim();
+      /* o painel escreve "-" onde não há data; sem normalizar, "" -> "-" viraria
+         uma "alteração" que não aconteceu */
+      const a = vazio(velho[col]) ? "" : velho[col].trim();
+      const b = vazio(c[col]) ? "" : c[col].trim();
       if (a !== b) datasAlteradas.push({ c, col, de: a || "(vazio)", para: b || "(vazio)" });
     }
   }

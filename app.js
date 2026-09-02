@@ -110,6 +110,50 @@
     return m ? +m[1] : 1;
   }
 
+  /* ---------------- feriados nacionais ----------------
+     Calculados, não listados: Carnaval, Sexta-feira Santa e Corpus Christi
+     dependem da Páscoa, então qualquer lista fixa venceria no ano seguinte.
+     Carnaval e Corpus Christi são ponto facultativo, não feriado por lei, mas
+     entram porque para quem estuda o efeito é o mesmo. */
+  function pascoa(ano) {
+    var a = ano % 19, b = Math.floor(ano / 100), c = ano % 100;
+    var d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+    var g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+    var i = Math.floor(c / 4), k = c % 4;
+    var l = (32 + 2 * e + 2 * i - h - k) % 7;
+    var m = Math.floor((a + 11 * h + 22 * l) / 451);
+    var mes = Math.floor((h + l - 7 * m + 114) / 31);
+    var dia = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(ano, mes - 1, dia);
+  }
+
+  var CACHE_FERIADOS = {};
+  function feriados(ano) {
+    if (CACHE_FERIADOS[ano]) return CACHE_FERIADOS[ano];
+    var f = {};
+    function por(data, nome) {
+      f[data.getFullYear() + "." + data.getMonth() + "." + data.getDate()] = nome;
+    }
+    [[0, 1, "Confraternização Universal"], [3, 21, "Tiradentes"],
+     [4, 1, "Dia do Trabalho"], [8, 7, "Independência"],
+     [9, 12, "Nossa Senhora Aparecida"], [10, 2, "Finados"],
+     [10, 15, "Proclamação da República"], [11, 25, "Natal"]
+    ].forEach(function (x) { por(new Date(ano, x[0], x[1]), x[2]); });
+
+    /* nacional só a partir da Lei 14.759/2023 */
+    if (ano >= 2024) por(new Date(ano, 10, 20), "Consciência Negra");
+
+    var p = pascoa(ano);
+    function desde(n) { return new Date(ano, p.getMonth(), p.getDate() + n); }
+    por(desde(-48), "Carnaval");
+    por(desde(-47), "Carnaval");
+    por(desde(-2), "Sexta-feira Santa");
+    por(desde(60), "Corpus Christi");
+
+    CACHE_FERIADOS[ano] = f;
+    return f;
+  }
+
   function isoDe(d) {
     function p(n) { return String(n).padStart(2, "0"); }
     return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
@@ -514,6 +558,7 @@
         var yy = Math.floor(atual / 12), mm = atual % 12;
         var totalDias = new Date(yy, mm + 1, 0).getDate();
         var offset = new Date(yy, mm, 1).getDay();
+        var fer = feriados(yy);
         var noMes = 0, celulas = "";
 
         for (var p = 0; p < offset; p++) celulas += '<div class="d pad"></div>';
@@ -522,8 +567,10 @@
           var evs = mapa[yy + "." + mm + "." + dd] || [];
           noMes += evs.length;
           var wd = data.getDay();
+          var feriado = fer[yy + "." + mm + "." + dd];
           var cls = "d";
-          if (wd === 0 || wd === 6) cls += " wknd";
+          if (wd === 0 || wd === 6 || feriado) cls += " wknd";
+          if (feriado) cls += " feriado";
           if (evs.length) cls += " busy";
           if (data < HOJE) cls += " gone";
           if (data.getTime() === HOJE.getTime()) cls += " today";
@@ -534,7 +581,9 @@
             marcas += '<span class="ec e' + i.f + '" title="' + esc(titulo) + '">' +
                       esc(i.o) + (i.foraDoCNJ ? "*" : "") + "</span>";
           });
-          celulas += '<div class="' + cls + '"><span class="dn">' + dd + "</span>" + marcas + "</div>";
+          celulas += '<div class="' + cls + '"' +
+            (feriado ? ' title="' + esc(feriado) + '"' : "") +
+            '><span class="dn">' + dd + "</span>" + marcas + "</div>";
         }
 
         html += '<section class="cal"><h3 class="cal-h">' + MESL[mm] + " <em>" + yy + "</em>" +

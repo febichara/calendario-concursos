@@ -42,6 +42,12 @@ A coluna CONCURSO define a cor e o filtro pela sigla — `TJ…`, `TRF…`, `MP�
 `DP…`. Quando você lançar a primeira data de Defensoria, o botão "Defensoria"
 aparece sozinho nos filtros.
 
+**Feriados nacionais** aparecem no calendário com um ponto ao lado do dia e o
+nome no tooltip. São calculados, não listados: Carnaval, Sexta-feira Santa e
+Corpus Christi dependem da Páscoa, então uma lista fixa venceria todo ano.
+Carnaval e Corpus Christi são ponto facultativo e não feriado por lei, mas
+entram porque para quem estuda o efeito é o mesmo.
+
 **O asterisco.** `TJPE*` quer dizer "prova de magistratura que o painel do CNJ
 ainda não registrou". É o único sinal de procedência que o site mostra, porque
 quase tudo vem do CNJ — marcar a origem do que é normal não informaria nada. MP
@@ -190,7 +196,7 @@ git rm dados/avisados.json && git commit -m "vigia: zerar avisos" && git push
 
 ---
 
-## Três armadilhas que já custaram caro
+## Quatro armadilhas que já custaram caro
 
 **Não use o endpoint `gviz` do Google para ler a planilha.** Ele adivinha o tipo
 da coluna: como a coluna DATA é quase toda data de verdade, devolve **vazio** nas
@@ -202,6 +208,11 @@ exatamente como está na tela.
 `Em andamento` e `Finalizados` (`li.lui-tab`); "Preparando" é um botão da barra
 de seleção. Pedir por ele em `ABAS_CNJ` faz o robô registrar um aviso no
 relatório, em vez de ler a tabela errada achando que trocou de aba.
+
+**O Qlik esconde colunas conforme a largura da janela.** O Playwright abre em
+1280px por padrão, e nessa largura o painel renderiza só 13 das 16 colunas — as
+etapas "4º fim" e "5º" somem do DOM sem erro nenhum, e o robô lê a tabela achando
+que está completa. Por isso o `cnj.mjs` força uma janela de 1920px.
 
 **Nunca grave o carimbo de hora sem comparar o conteúdo.** Os arquivos de
 `dados/` só são reescritos quando o que está dentro muda (`scripts/salvar.mjs`).
