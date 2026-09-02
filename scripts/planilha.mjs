@@ -1,8 +1,8 @@
 /* Baixa a aba de entrada da planilha e guarda uma cópia em dados/concursos.json.
    O site lê a planilha ao vivo; essa cópia é só o plano B de quando o Google
    estiver fora do ar. */
-import { writeFileSync, mkdirSync } from "node:fs";
 import { CSV_URL } from "./config.mjs";
+import { salvarEstavel } from "./salvar.mjs";
 
 export function lerCSV(texto) {
   const linhas = [];
@@ -58,8 +58,8 @@ export async function baixarPlanilha() {
 if (import.meta.url === `file://${process.argv[1]}` ||
     process.argv[1]?.endsWith("planilha.mjs")) {
   const linhas = await baixarPlanilha();
-  mkdirSync("dados", { recursive: true });
-  writeFileSync("dados/concursos.json",
-    JSON.stringify({ atualizadoEm: new Date().toISOString(), linhas }, null, 2) + "\n");
-  console.log(`planilha: ${linhas.length} linhas salvas em dados/concursos.json`);
+  const gravou = salvarEstavel("dados/concursos.json",
+    { atualizadoEm: new Date().toISOString(), linhas });
+  console.log(`planilha: ${linhas.length} linhas` +
+    (gravou ? " — cópia atualizada" : " — sem mudança, cópia mantida"));
 }

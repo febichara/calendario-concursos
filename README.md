@@ -7,7 +7,7 @@ confere o painel do CNJ todo dia de manhã e avisa quando aparece novidade.
 - **Site**: `index.html` + `app.js`. É estático, não tem servidor nem banco.
 - **Fonte dos dados**: a aba `INSERIR NOVAS DATAS AQUI` da planilha. Você edita
   lá, dá refresh no site, mudou. Não precisa republicar nada.
-- **Robô**: `.github/workflows/vigia-cnj.yml` roda às 6h (horário de Brasília),
+- **Robô**: `.github/workflows/vigia-cnj.yml` roda às 6h, 13h e 19h (Brasília),
   lê o painel do CNJ e **abre uma issue** quando encontra algo novo. A issue
   chega no seu e-mail. Ele nunca escreve na planilha.
 
@@ -145,3 +145,21 @@ entrega o texto exatamente como está na tela.
 `Em andamento` e `Finalizados` (`li.lui-tab`); "Preparando" é um botão da barra
 de seleção. Pedir por ele em `ABAS_CNJ` faz o robô registrar um aviso no
 relatório em vez de ler a tabela errada achando que trocou de aba.
+
+### Frequência do robô
+
+O `cron` do workflow está em `0 9,16,22 * * *` (UTC), ou seja 6h, 13h e 19h de
+Brasília. Rodar mais vezes não custa nada — repositório público tem minutos de
+Actions ilimitados — e não gera e-mail a mais, porque a issue só é aberta quando
+o relatório tem novidade.
+
+Duas coisas que fazem essa frequência ser segura:
+
+- Os arquivos de `dados/` só são regravados quando o **conteúdo** muda, não a
+  cada execução (ver `scripts/salvar.mjs`). Sem isso, cada rodada viraria um
+  commit e uma reconstrução do site à toa.
+- Uma divergência já avisada não é avisada de novo enquanto continuar valendo
+  (ver `dados/avisados.json`).
+
+Se o repositório ficar 60 dias sem atividade sua, o GitHub pausa workflows
+agendados e te manda um e-mail. É só clicar em reativar na aba Actions.

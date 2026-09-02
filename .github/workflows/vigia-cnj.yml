@@ -2,8 +2,10 @@ name: Vigia do CNJ
 
 on:
   schedule:
-    # 09:00 UTC = 06:00 em Brasília
-    - cron: "0 9 * * *"
+    # Brasília é UTC-3 o ano todo. 06:00, 13:00 e 19:00 daqui.
+    # Três disparos também cobrem o caso de o cron do GitHub atrasar ou pular
+    # uma execução em horário de pico, o que acontece.
+    - cron: "0 9,16,22 * * *"
   workflow_dispatch:
 
 permissions:
@@ -60,5 +62,10 @@ jobs:
           git config user.name "vigia-cnj"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add dados/
-          git diff --staged --quiet || git commit -m "dados: leitura do CNJ de $(date +%F)"
-          git push
+          if git diff --staged --quiet; then
+            echo "nada mudou — sem commit"
+          else
+            git commit -m "dados: leitura do CNJ de $(date +%F)"
+            git pull --rebase --autostash origin main
+            git push
+          fi

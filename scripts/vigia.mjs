@@ -4,7 +4,8 @@
    Regra que evita e-mail chato: divergências que já foram avisadas ontem e
    continuam valendo NÃO viram aviso de novo. Só entra no relatório o que é
    novidade em relação à última execução. */
-import { readFileSync, writeFileSync, existsSync, renameSync, appendFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, rmSync, appendFileSync } from "node:fs";
+import { salvarEstavel } from "./salvar.mjs";
 import { COLUNAS_DATA, ABA_ATIVA } from "./config.mjs";
 import { baixarPlanilha } from "./planilha.mjs";
 import { lerData, iso, brasileiro, diasDe, lerFase } from "./datas.mjs";
@@ -171,9 +172,11 @@ const corpo = mudou
   : "Nenhuma novidade no painel do CNJ.";
 
 writeFileSync("relatorio.md", corpo + "\n");
-writeFileSync("dados/avisados.json",
-  JSON.stringify(divergencias.map(d => d.chave).sort(), null, 2) + "\n");
-renameSync("dados/cnj-novo.json", "dados/cnj.json");
+salvarEstavel("dados/avisados.json", divergencias.map(d => d.chave).sort());
+/* salvarEstavel e não rename: assim o arquivo só muda quando o painel mudou,
+   e o robô não abre um commit a cada execução só porque o horário é outro. */
+salvarEstavel("dados/cnj.json", novo);
+rmSync("dados/cnj-novo.json", { force: true });
 
 if (process.env.GITHUB_OUTPUT) {
   appendFileSync(process.env.GITHUB_OUTPUT, `mudou=${mudou}\n`);
