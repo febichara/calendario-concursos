@@ -6,7 +6,8 @@ compartilhar com os amigos.
 O calendário é a **união de duas fontes**: a magistratura vem do painel do CNJ,
 e a planilha do Google entra ao vivo com o que o painel não cobre — magistratura
 que ainda não foi registrada lá e as outras carreiras. Onde as duas falam da
-mesma prova, vale a planilha.
+mesma prova de magistratura, vale a data do CNJ — a linha da planilha sai do
+calendário e a divergência é avisada por issue, que só você vê.
 
 - **Site**: `index.html` + `app.js`. É estático, não tem servidor nem banco.
 - **Planilha**: a aba `INSERIR NOVAS DATAS AQUI`. Serve para o que o CNJ não

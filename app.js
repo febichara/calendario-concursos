@@ -191,21 +191,36 @@
     return itens;
   }
 
-  /* A planilha manda: onde as duas fontes falam da mesma prova, fica a linha
-     dela (que pode ter detalhe escrito por você). Do CNJ entra só o que a
-     planilha não cobre. O painel repete concursos com Ids diferentes, então
-     também removemos duplicata interna dele. */
+  /* Para magistratura o painel do CNJ é a fonte boa: se ele já cobre aquele
+     órgão e fase, a linha da planilha sai do calendário e vale a data dele.
+     Evita mostrar a mesma prova duas vezes quando as datas divergem — a
+     divergência não some, é avisada por issue, que só o dono do repositório vê.
+
+     A planilha continua mandando no que o painel não cobre (magistratura ainda
+     não registrada, como o TJPE) e nas outras carreiras. */
   function juntar(daPlanilha, doCnj) {
-    var visto = {};
-    daPlanilha.forEach(function (i) { visto[i.o + "|" + isoDe(i.s)] = true; });
-    var extras = [];
+    var cobertoPeloCNJ = {};
+    doCnj.forEach(function (i) { cobertoPeloCNJ[i.o + "|" + i.f] = true; });
+
+    var ficam = daPlanilha.filter(function (i) {
+      var magistratura = i.tipo === "TJ" || i.tipo === "TRF";
+      return !(magistratura && cobertoPeloCNJ[i.o + "|" + i.f]);
+    });
+
+    /* o painel repete o mesmo concurso com Ids diferentes */
+    var visto = {}, extras = [];
     doCnj.forEach(function (i) {
       var chave = i.o + "|" + isoDe(i.s);
       if (visto[chave]) return;
       visto[chave] = true;
       extras.push(i);
     });
-    return { itens: ordenar(daPlanilha.concat(extras)), doCNJ: extras.length };
+
+    return {
+      itens: ordenar(ficam.concat(extras)),
+      doCNJ: extras.length,
+      substituidas: daPlanilha.length - ficam.length
+    };
   }
 
   /* A aba tem duas linhas de cabeçalho. Achamos a linha de títulos pelo texto e
@@ -552,9 +567,7 @@
         (cnj && cnj.atualizadoEm
           ? " (lido em " + new Date(cnj.atualizadoEm).toLocaleDateString("pt-BR") + ")"
           : "") +
-        "; a <b>planilha</b> entra ao vivo com o que falta lá e com as outras carreiras." +
-        (juncao.doCNJ ? " " + juncao.doCNJ + " prova" + (juncao.doCNJ > 1 ? "s vieram" : " veio") +
-          " só do painel." : "");
+        "; a <b>planilha</b> entra ao vivo com o que falta lá e com as outras carreiras.";
     } else {
       var q = dados.quando ? new Date(dados.quando) : null;
       fonte.innerHTML = "A planilha não respondeu; mostrando a cópia de <b>" +
