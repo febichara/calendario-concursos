@@ -181,6 +181,7 @@
   function marcarCNJ(itens, set) {
     if (!set) return;
     itens.forEach(function (i) {
+      if (i.prazo) return;
       if (i.tipo !== "TJ" && i.tipo !== "TRF") return;
       var achou = false;
       for (var c = new Date(i.s.getTime()); c <= i.e && !achou;
@@ -189,6 +190,11 @@
       }
       i.foraDoCNJ = !achou;
     });
+  }
+
+  function semAcento(t) {
+    return String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .toUpperCase().trim();
   }
 
   function classificar(org) {
@@ -215,12 +221,36 @@
 
   /* linhas cruas -> itens prontos; devolve também o que não deu pra entender */
   function montar(linhas) {
-    var itens = [], recusadas = [];
+    var itens = [], recusadas = [], prazosVistos = {};
     linhas.forEach(function (l) {
       var org = String(l.concurso || "").trim().toUpperCase();
       if (!org) return;
+
+      /* O prazo de inscrição pertence ao concurso, não à fase. Se você repetir
+         o valor nas linhas de 1ª e 2ª fase, ele vira uma marcação só. */
+      if (l.inscricao) {
+        var pi = lerData(l.inscricao);
+        if (!pi) {
+          recusadas.push(l.inscricao + " — inscrição do " + org);
+        } else {
+          var chave = org + "|" + isoDe(pi.s);
+          if (!prazosVistos[chave]) {
+            prazosVistos[chave] = true;
+            var prazo = criarItem(org, 0, "", pi.s, pi.e);
+            prazo.prazo = true;
+            itens.push(prazo);
+          }
+        }
+      }
+
       var per = lerData(l.data);
-      if (!per) { recusadas.push((l.data || "(vazio)") + " — " + org); return; }
+      if (!per) {
+        /* linha que só traz prazo de inscrição é legítima, não é erro */
+        if (String(l.data || "").trim() || !l.inscricao) {
+          recusadas.push((l.data || "(vazio)") + " — " + org);
+        }
+        return;
+      }
       itens.push(criarItem(org, lerFase(l.fase), String(l.detalhe || "").trim(),
                            per.s, per.e));
     });
@@ -296,12 +326,21 @@
     var iData = col("DATA", 0), iConc = col("CONCURSO", 1);
     var iFase = col("FASE", 2), iDet = col("DETALHE", 3);
 
+    /* Coluna opcional do prazo de inscrição. Casada por "INSCRI" sem acento,
+       para aceitar "INSCRIÇÃO ATÉ", "INSCRICAO", "PRAZO DE INSCRIÇÃO" etc.
+       Se a coluna não existir, o site funciona igual — só não mostra prazos. */
+    var iInsc = -1;
+    for (var j = 0; j < cab.length; j++) {
+      if (semAcento(cab[j]).indexOf("INSCRI") >= 0) { iInsc = j; break; }
+    }
+
     return grade.slice(h + 1).map(function (c) {
       return {
         data: (c[iData] || "").trim(),
         concurso: (c[iConc] || "").trim().toUpperCase(),
         fase: (c[iFase] || "").trim(),
-        detalhe: (c[iDet] || "").trim()
+        detalhe: (c[iDet] || "").trim(),
+        inscricao: iInsc >= 0 ? (c[iInsc] || "").trim() : ""
       };
     }).filter(function (l) { return l.concurso; });
   }
@@ -357,7 +396,11 @@
     return it.s.getDate() + " de " + MESL[it.s.getMonth()] + " a " +
            it.e.getDate() + " de " + MESL[it.e.getMonth()] + " de " + it.e.getFullYear();
   }
-  function faseTag(f) { return '<span class="fase f' + f + '">' + f + "ª fase</span>"; }
+  function etiqueta(i) {
+    return i.prazo
+      ? '<span class="fase prazo">inscrição até</span>'
+      : '<span class="fase f' + i.f + '">' + i.f + "ª fase</span>";
+  }
 
   var AVISO_CNJ = "Ainda não consta no painel do CNJ";
   function nomeOrg(i) {
@@ -400,8 +443,10 @@
         pronto.recusadas.join("; ") + ".";
     }
 
-    /* próxima prova */
-    var futuros = items.filter(function (i) { return i.status !== "past"; });
+    /* prazo de inscrição não é prova: não abre o painel nem entra nos números */
+    var futuros = items.filter(function (i) {
+      return i.status !== "past" && !i.prazo;
+    });
     if (futuros.length) {
       var n = futuros[0];
       var seq = futuros.slice(1, 4).map(function (i) {
@@ -414,7 +459,7 @@
         '<div class="hero-count"><span class="hero-num">' + num + '</span>' +
         '<span class="hero-unit">' + unit + "</span></div>" +
         '<div><p class="hero-label">Próxima prova</p>' +
-        '<h2 class="hero-org">' + nomeOrg(n) + " " + faseTag(n.f) + "</h2>" +
+        '<h2 class="hero-org">' + nomeOrg(n) + " " + etiqueta(n) + "</h2>" +
         (n.d ? '<p class="hero-det">' + esc(n.d) + "</p>" : "") +
         '<p class="hero-when">' + dataLonga(n) + "</p>" +
         (seq ? '<div class="hero-next">' + seq + "</div>" : "") + "</div>";
@@ -497,7 +542,8 @@
       return items.filter(function (i) {
         if (!state.past && i.status === "past") return false;
         if (state.tipo !== "all" && i.tipo !== state.tipo) return false;
-        if (state.fase !== "all" && String(i.f) !== state.fase) return false;
+        /* prazo de inscrição não pertence a fase nenhuma */
+        if (state.fase !== "all" && (i.prazo || String(i.f) !== state.fase)) return false;
         if (state.org !== "all" && i.o !== state.org) return false;
         return true;
       });
@@ -522,7 +568,7 @@
         html += '<article class="' + cls + '">' +
           '<div class="ev-date"><span class="ev-day">' + dia + '</span>' +
           '<span class="ev-mo">' + mo + "</span></div>" +
-          '<div><p class="ev-org">' + nomeOrg(i) + " " + faseTag(i.f) + "</p>" +
+          '<div><p class="ev-org">' + nomeOrg(i) + " " + etiqueta(i) + "</p>" +
           (i.d ? '<p class="ev-det">' + esc(i.d) + "</p>" : "") + "</div>" +
           '<div class="ev-when">' + quando(i) + "</div></article>";
       });
@@ -576,6 +622,12 @@
           if (data.getTime() === HOJE.getTime()) cls += " today";
           var marcas = "";
           evs.forEach(function (i) {
+            if (i.prazo) {
+              marcas += '<span class="ec prazo" title="' +
+                        esc(i.o + " — último dia de inscrição") + '">' +
+                        esc(i.o) + " insc.</span>";
+              return;
+            }
             var titulo = i.o + " — " + i.f + "ª fase" + (i.d ? " (" + i.d + ")" : "") +
                          (i.foraDoCNJ ? " · " + AVISO_CNJ.toLowerCase() : "");
             marcas += '<span class="ec e' + i.f + '" title="' + esc(titulo) + '">' +

@@ -114,6 +114,7 @@ body{
   margin-right:.32rem; vertical-align:-1px}
 .legend i.l1{background:var(--navy)}
 .legend i.l2{background:var(--toga)}
+.legend i.l3{background:transparent; border:1px dashed var(--ink-3)}
 .legend.is-off{display:none}
 /* asterisco de "ainda não consta no painel do CNJ" */
 .semcnj{font-weight:700; cursor:help}
@@ -214,6 +215,10 @@ select{
 }
 .d .ec.e1{background:var(--navy-chip); color:var(--navy)}
 .d .ec.e2{background:var(--toga-chip); color:var(--toga)}
+/* prazo de inscrição: contorno vazado, para não se confundir com dia de prova */
+.d .ec.prazo{background:transparent; border:1px dashed var(--ink-3); color:var(--ink-2);
+  padding:.02rem .18rem}
+.fase.prazo{background:transparent; border:1px dashed var(--ink-3); color:var(--ink-2)}
 @media (max-width:400px){
   .d{min-height:2.8rem}
   .d .ec{font-size:.55rem}
@@ -298,7 +303,7 @@ select{
       <button type="button" data-view="cal" class="is-on">Calendário</button>
       <button type="button" data-view="lista">Lista</button>
     </div>
-    <p class="legend" id="legend"><span><i class="l1"></i>1ª fase</span><span><i class="l2"></i>2ª fase</span><span id="legenda-cnj" hidden><b class="semcnj">*</b> fora do painel do CNJ</span><span><b class="semcnj">•</b> feriado</span></p>
+    <p class="legend" id="legend"><span><i class="l1"></i>1ª fase</span><span><i class="l2"></i>2ª fase</span><span><i class="l3"></i>inscrição</span><span id="legenda-cnj" hidden><b class="semcnj">*</b> fora do painel do CNJ</span><span><b class="semcnj">•</b> feriado</span></p>
   </div>
 
   <div class="filters" hidden id="filters">

@@ -35,12 +35,26 @@ Formatos aceitos na coluna DATA:
 | `31/05 e 01/06/2026` | intervalo virando o mês |
 | `11/04/2027 e 12/04/2027` | ano repetido nos dois lados |
 
+Os mesmos formatos valem para a coluna de inscrição.
+
 Linha em formato não reconhecido não some em silêncio: o site mostra um aviso
 no topo dizendo qual ficou de fora.
 
 A coluna CONCURSO define a cor e o filtro pela sigla — `TJ…`, `TRF…`, `MP…`,
 `DP…`. Quando você lançar a primeira data de Defensoria, o botão "Defensoria"
 aparece sozinho nos filtros.
+
+**Prazo de inscrição.** A aba aceita uma coluna opcional chamada
+`INSCRIÇÃO ATÉ` (qualquer título contendo "inscri" serve, com ou sem acento).
+Preenchida, o último dia de inscrição vira uma marcação própria no calendário:
+**contorno vazado**, escrito `TJXX insc.`, em vez do bloco sólido das provas —
+para não confundir dia de prova com dia de perder o prazo.
+
+O prazo pertence ao concurso, não à fase. Se você repetir o mesmo valor nas
+linhas de 1ª e 2ª fase, vira uma marcação só. Ele não conta em "provas pela
+frente", não ocupa o painel de "próxima prova" e some quando você filtra por uma
+fase específica. O CNJ não publica prazo de inscrição em nenhuma das 16 colunas
+do painel, então essa informação só existe se você digitar.
 
 **Feriados nacionais** aparecem no calendário com um ponto ao lado do dia e o
 nome no tooltip. São calculados, não listados: Carnaval, Sexta-feira Santa e
