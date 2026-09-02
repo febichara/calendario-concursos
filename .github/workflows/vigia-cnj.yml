@@ -50,12 +50,23 @@ jobs:
             const fs = require('node:fs');
             const body = fs.readFileSync('relatorio.md', 'utf8');
             const hoje = new Date().toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-            await github.rest.issues.create({
+            const base = {
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Novidades no painel do CNJ — ${hoje}`,
               body
-            });
+            };
+            // Atribuir a issue ao dono do repositório é o que garante a
+            // notificação: sem isso ela só chega a quem estiver "watching" com
+            // e-mail ligado, que não é o padrão de toda conta.
+            try {
+              await github.rest.issues.create({
+                ...base, assignees: [context.repo.owner]
+              });
+            } catch (erro) {
+              core.warning(`não consegui atribuir a issue: ${erro.message}`);
+              await github.rest.issues.create(base);
+            }
 
       - name: Guardar a leitura de hoje
         run: |
