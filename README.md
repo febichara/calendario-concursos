@@ -17,7 +17,7 @@ confere o painel do CNJ todo dia de manhã e avisa quando aparece novidade.
 
 ### 1. Criar o repositório
 
-No GitHub, crie um repositório **público** chamado `pauta-concursos`.
+No GitHub, crie um repositório **público** chamado `calendario-concursos`.
 Público importa por dois motivos: o GitHub Pages é gratuito só em repositório
 público na conta free, e os minutos de Actions também.
 
@@ -25,17 +25,21 @@ Não marque nenhuma opção de inicialização (sem README, sem .gitignore).
 
 ### 2. Subir os arquivos
 
-Com o Git instalado, dentro da pasta do projeto:
+Esta pasta já é um repositório Git, já tem o primeiro commit e já aponta para
+`github.com/febichara/calendario-concursos`. Então basta:
 
 ```bash
-git init -b main && git add . && git commit -m "pauta de provas" && git remote add origin https://github.com/SEU-USUARIO/pauta-concursos.git && git push -u origin main
+git push -u origin main
 ```
 
-Troque `SEU-USUARIO` pelo seu usuário do GitHub.
+Na primeira vez o Windows abre uma janela do navegador pedindo login no GitHub.
+É o Credential Manager; ele guarda a credencial para as próximas.
 
-> Sem Git? Dá para arrastar a pasta inteira em **Add file → Upload files** na
-> página do repositório. Arraste a pasta, não os arquivos soltos — assim a
-> subpasta `.github/workflows` sobe junto, que é onde mora o robô.
+Daí em diante, para publicar qualquer alteração:
+
+```bash
+git add . && git commit -m "o que mudou" && git push
+```
 
 ### 3. Liberar o robô a escrever
 
@@ -52,7 +56,7 @@ escolha `main` e a pasta `/ (root)` → Save.
 Um minuto depois o site está no ar em:
 
 ```
-https://SEU-USUARIO.github.io/pauta-concursos/
+https://febichara.github.io/calendario-concursos/
 ```
 
 Esse é o link para mandar para os amigos.
