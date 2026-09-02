@@ -351,5 +351,13 @@ select{
 </dialog>
 
 <script src="app.js"></script>
+
+<!-- Cloudflare Web Analytics: contagem de visitas sem cookie e sem rastrear
+     ninguém individualmente, por isso não precisa de aviso de consentimento.
+     Invisível para o visitante; os números ficam no painel da Cloudflare.
+     Só conta o host cadastrado lá (calendario-concursos.pages.dev) — acessos
+     pelo endereço do GitHub Pages não entram. -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "7bb8030914e649ac80a783ba5e90a2b8"}'></script>
 </body>
 </html>
