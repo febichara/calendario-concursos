@@ -146,6 +146,35 @@ entrega o texto exatamente como está na tela.
 de seleção. Pedir por ele em `ABAS_CNJ` faz o robô registrar um aviso no
 relatório em vez de ler a tabela errada achando que trocou de aba.
 
+### Quem manda quando as fontes discordam
+
+A planilha é sempre a fonte da verdade do que aparece no site. O robô **nunca
+escreve** nela: ele só compara e avisa. Para cada órgão e fase ele monta dois
+conjuntos de datas — o que o CNJ diz e o que a planilha diz — e classifica:
+
+| Situação | Como aparece no aviso |
+| --- | --- |
+| CNJ tem data, planilha não tem nada nessa fase | *No painel do CNJ, mas não na planilha* |
+| Os dois têm datas e elas não batem | *Conflito: as duas fontes discordam*, com os dois lados |
+| Planilha tem data futura, o painel não registrou nenhuma | *Na planilha, ainda não no painel* |
+| A sigla não aparece em nenhuma aba do painel | *Concursos que o painel não lista* |
+
+Cada aviso é dado **uma vez só**. Quando você corrige a planilha (ou o CNJ se
+acerta), a divergência some da lista e o robô a anuncia por nome em
+*Resolvido desde a última leitura* — então você tem confirmação do que entrou em
+ordem, não só do que está errado.
+
+No site, a mesma informação aparece como asterisco: `TJPE*` quer dizer "essa
+prova de magistratura ainda não consta no painel do CNJ". MP e Defensoria nunca
+recebem asterisco, porque o painel não cobre essas carreiras.
+
+### Com que frequência cada coisa é lida
+
+- **O site lê a planilha a cada visita.** Não é agendado e não tem cache: você
+  edita a planilha, dá refresh, mudou.
+- **O robô lê tudo 3x ao dia.** É o que atualiza o `dados/cnj.json`, então uma
+  mudança feita *pelo CNJ* leva até 8h para refletir no asterisco.
+
 ### Frequência do robô
 
 O `cron` do workflow está em `0 9,16,22 * * *` (UTC), ou seja 6h, 13h e 19h de

@@ -50,7 +50,13 @@ if (!novo) {
   process.exit(1);
 }
 const antigo = carregar("dados/cnj.json");
-const avisadosAntes = new Set(carregar("dados/avisados.json", []));
+/* avisados.json guarda { chave: texto }. É o texto que permite dizer QUAL
+   divergência se resolveu, em vez de só contar quantas. Aceita também o formato
+   antigo (lista de chaves) para não quebrar sobre um arquivo já gravado. */
+const avisadosCru = carregar("dados/avisados.json", {});
+const avisadosAntes = Array.isArray(avisadosCru)
+  ? Object.fromEntries(avisadosCru.map(k => [k, k]))
+  : avisadosCru;
 
 const agora = concursosAtivos(novo);
 const antes = antigo ? concursosAtivos(antigo) : null;
@@ -83,30 +89,64 @@ const planilha = await baixarPlanilha();
 const idx = indexarPlanilha(planilha);
 const siglasCNJ = todasAsSiglas(novo);
 
-const divergencias = [];   // { chave, tipo, texto }
+/* Junta, para cada órgão e fase, o que o CNJ diz e o que a planilha diz, e
+   compara os dois conjuntos. Comparar conjunto contra conjunto (em vez de data
+   contra data) é o que permite distinguir "a planilha não tem isso" de "os dois
+   têm, mas discordam" — que são problemas diferentes e pedem ações diferentes. */
+const FASES = [
+  { fase: 1, cols: ["Prova objetiva"] },
+  { fase: 2, cols: ["2º Etapa início", "2º Etapa fim"] }
+];
 
+const porOrgaoFase = new Map();
 for (const c of agora.values()) {
-  const s = c.sigla;
-  const conferir = [
-    { fase: 1, cols: ["Prova objetiva"] },
-    { fase: 2, cols: ["2º Etapa início", "2º Etapa fim"] }
-  ];
-  for (const { fase, cols } of conferir) {
-    const naPlanilha = idx.get(`${s}|${fase}`) ?? new Set();
+  for (const { fase, cols } of FASES) {
+    const chave = `${c.sigla}|${fase}`;
+    if (!porOrgaoFase.has(chave)) {
+      porOrgaoFase.set(chave, {
+        sigla: c.sigla, fase,
+        cnj: new Set(),
+        naPlanilha: idx.get(chave) ?? new Set()
+      });
+    }
+    const alvo = porOrgaoFase.get(chave);
     for (const col of cols) {
       if (vazio(c[col])) continue;
       const p = lerData(c[col]);
-      if (!p) continue;
-      const dia = iso(p.s);
-      if (naPlanilha.has(dia)) continue;
-      if (dia < HOJE) continue;   // prova que já aconteceu não é aviso útil
-      const chave = `falta|${s}|${fase}|${dia}`;
-      if (divergencias.some(d => d.chave === chave)) continue;  // painel repete o mesmo concurso
-      divergencias.push({
-        chave, tipo: "falta",
-        texto: `**${s}** ${fase}ª fase — ${brasileiro(dia)} (${col})`
-      });
+      if (p) alvo.cnj.add(iso(p.s));
     }
+  }
+}
+
+const divergencias = [];   // { chave, tipo, texto }
+const lista = ds => ds.map(brasileiro).join(", ");
+
+for (const { sigla, fase, cnj, naPlanilha } of porOrgaoFase.values()) {
+  /* prova que já passou não é aviso útil */
+  const soNoCNJ = [...cnj].filter(d => d >= HOJE && !naPlanilha.has(d)).sort();
+  const soNaPlanilha = [...naPlanilha].filter(d => d >= HOJE && !cnj.has(d)).sort();
+  if (!soNoCNJ.length && !soNaPlanilha.length) continue;
+
+  if (soNoCNJ.length && soNaPlanilha.length) {
+    divergencias.push({
+      chave: `conflito|${sigla}|${fase}|${soNoCNJ.join(",")}|${soNaPlanilha.join(",")}`,
+      tipo: "conflito",
+      texto: `**${sigla}** ${fase}ª fase — CNJ diz ${lista(soNoCNJ)}, ` +
+             `sua planilha diz ${lista(soNaPlanilha)}`
+    });
+  } else if (soNoCNJ.length) {
+    divergencias.push({
+      chave: `falta|${sigla}|${fase}|${soNoCNJ.join(",")}`,
+      tipo: "falta",
+      texto: `**${sigla}** ${fase}ª fase — ${lista(soNoCNJ)} (não está na planilha)`
+    });
+  } else {
+    divergencias.push({
+      chave: `adiantado|${sigla}|${fase}|${soNaPlanilha.join(",")}`,
+      tipo: "adiantado",
+      texto: `**${sigla}** ${fase}ª fase — ${lista(soNaPlanilha)} ` +
+             `(sua planilha tem, o painel ainda não registrou)`
+    });
   }
 }
 
@@ -120,9 +160,10 @@ for (const sigla of new Set(planilha.filter(l => /^(TJ|TRF)/.test(l.concurso))
 }
 
 /* só o que ainda não tinha sido avisado */
-const novasDivergencias = divergencias.filter(d => !avisadosAntes.has(d.chave));
-const resolvidas = [...avisadosAntes].filter(
-  k => !divergencias.some(d => d.chave === k));
+const novasDivergencias = divergencias.filter(d => !(d.chave in avisadosAntes));
+const resolvidas = Object.entries(avisadosAntes)
+  .filter(([k]) => !divergencias.some(d => d.chave === k))
+  .map(([, texto]) => texto);
 
 /* ---------- relatório ---------- */
 const partes = [];
@@ -147,16 +188,20 @@ if (datasAlteradas.length) {
   ).join("\n"));
 }
 
-const faltas = novasDivergencias.filter(d => d.tipo === "falta");
-if (faltas.length) {
-  partes.push("### No painel do CNJ, mas não na planilha\n" +
-    faltas.map(d => "- " + d.texto).join("\n"));
+const SECOES = [
+  ["conflito",  "### Conflito: as duas fontes discordam"],
+  ["falta",     "### No painel do CNJ, mas não na planilha"],
+  ["adiantado", "### Na planilha, ainda não no painel"],
+  ["semCNJ",    "### Concursos que o painel não lista"]
+];
+for (const [tipo, titulo] of SECOES) {
+  const ds = novasDivergencias.filter(d => d.tipo === tipo);
+  if (ds.length) partes.push(titulo + "\n" + ds.map(d => "- " + d.texto).join("\n"));
 }
 
-const semCNJ = novasDivergencias.filter(d => d.tipo === "semCNJ");
-if (semCNJ.length) {
-  partes.push("### Na planilha, mas não no painel\n" +
-    semCNJ.map(d => "- " + d.texto).join("\n"));
+if (resolvidas.length) {
+  partes.push("### Resolvido desde a última leitura\n" +
+    resolvidas.map(t => "- " + t).join("\n"));
 }
 
 if (novo.avisos?.length) {
@@ -167,12 +212,14 @@ const mudou = partes.length > 0;
 const corpo = mudou
   ? `Leitura de ${new Date().toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}.\n\n` +
     partes.join("\n\n") +
-    (resolvidas.length ? `\n\n_Resolvidas desde a última leitura: ${resolvidas.length}._` : "") +
     "\n\n---\n_A planilha não foi alterada. Este aviso é só para você conferir._"
   : "Nenhuma novidade no painel do CNJ.";
 
 writeFileSync("relatorio.md", corpo + "\n");
-salvarEstavel("dados/avisados.json", divergencias.map(d => d.chave).sort());
+salvarEstavel("dados/avisados.json",
+  Object.fromEntries(divergencias
+    .sort((a, b) => a.chave.localeCompare(b.chave))
+    .map(d => [d.chave, d.texto])));
 /* salvarEstavel e não rename: assim o arquivo só muda quando o painel mudou,
    e o robô não abre um commit a cada execução só porque o horário é outro. */
 salvarEstavel("dados/cnj.json", novo);

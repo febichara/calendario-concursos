@@ -7,7 +7,13 @@ import { writeFileSync, mkdirSync } from "node:fs";
 import { chromium } from "playwright";
 import { PAINEL_CNJ, ABAS_CNJ, sigla } from "./config.mjs";
 
-const ESPERA = 60000;
+/* O painel é um Qlik pesado: baixa uma centena de arquivos JS e só então abre o
+   WebSocket que traz os dados. Num runner frio do GitHub isso passa de 60s com
+   alguma frequência, e o CNJ também tem seus momentos ruins. Daí a espera larga
+   e as tentativas: falha transitória não deve virar e-mail de erro. */
+const ESPERA = 90000;
+const TENTATIVAS = 3;
+const PAUSA_ENTRE_TENTATIVAS = 10000;
 
 /* Roda dentro da página: lê a tabela visível. */
 function extrairTabela() {
@@ -52,6 +58,22 @@ async function carregarTudo(page) {
 }
 
 export async function lerPainel() {
+  let ultimoErro;
+  for (let tentativa = 1; tentativa <= TENTATIVAS; tentativa++) {
+    try {
+      return await umaLeitura();
+    } catch (erro) {
+      ultimoErro = erro;
+      console.error(`CNJ · tentativa ${tentativa}/${TENTATIVAS} falhou: ${erro.message}`);
+      if (tentativa < TENTATIVAS) {
+        await new Promise(r => setTimeout(r, PAUSA_ENTRE_TENTATIVAS));
+      }
+    }
+  }
+  throw ultimoErro;
+}
+
+async function umaLeitura() {
   const browser = await chromium.launch();
   const page = await browser.newPage({ locale: "pt-BR" });
   const resultado = { atualizadoEm: new Date().toISOString(), abas: {}, avisos: [] };
