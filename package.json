@@ -1,0 +1,17 @@
+{
+  "name": "pauta-concursos",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Calendário de provas de concursos, lido da planilha, com um robô que vigia o painel do CNJ.",
+  "scripts": {
+    "planilha": "node scripts/planilha.mjs",
+    "cnj": "node scripts/cnj.mjs",
+    "vigia": "node scripts/vigia.mjs",
+    "tudo": "npm run planilha && npm run cnj && npm run vigia",
+    "site": "node --run-http 2>/dev/null || npx --yes serve ."
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}

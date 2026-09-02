@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pauta de provas — Magistratura e MP</title>
+<meta name="description" content="Calendário das provas de concursos da magistratura, Ministério Público e Defensoria.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Petrona:ital,wght@0,400;0,600;0,700;1,500&display=swap">
+<style>
+:root{
+  --ground:#EBEEF3; --paper:#FFFFFF; --ink:#151A24; --ink-2:#5A6373; --ink-3:#8A93A3;
+  --rule:#D6DBE4; --rule-soft:#E5E9EF;
+  --toga:#7E1F2E; --toga-soft:rgba(126,31,46,.10); --toga-chip:rgba(126,31,46,.14);
+  --navy:#1E3C74; --navy-soft:rgba(30,60,116,.10); --navy-chip:rgba(30,60,116,.14);
+  --brass:#8E7222;
+  --hero-bg:#151A24; --hero-fg:#F2F4F8; --hero-dim:#98A1B2; --hero-accent:#C79E3C;
+  --hero-rule:rgba(242,244,248,.14);
+  --shadow:0 1px 2px rgba(20,26,38,.05),0 10px 28px -16px rgba(20,26,38,.30);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1219; --paper:#161C26; --ink:#E8EBF1; --ink-2:#98A1B2; --ink-3:#6C7688;
+    --rule:#28303E; --rule-soft:#1C2430;
+    --toga:#DE7482; --toga-soft:rgba(222,116,130,.14); --toga-chip:rgba(222,116,130,.20);
+    --navy:#7FA5E8; --navy-soft:rgba(127,165,232,.14); --navy-chip:rgba(127,165,232,.20);
+    --brass:#D8B25C;
+    --hero-bg:#1B2230; --hero-fg:#EDF0F5; --hero-dim:#98A1B2; --hero-accent:#D8B25C;
+    --hero-rule:rgba(237,240,245,.12);
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1219; --paper:#161C26; --ink:#E8EBF1; --ink-2:#98A1B2; --ink-3:#6C7688;
+  --rule:#28303E; --rule-soft:#1C2430;
+  --toga:#DE7482; --toga-soft:rgba(222,116,130,.14); --toga-chip:rgba(222,116,130,.20);
+  --navy:#7FA5E8; --navy-soft:rgba(127,165,232,.14); --navy-chip:rgba(127,165,232,.20);
+  --brass:#D8B25C;
+  --hero-bg:#1B2230; --hero-fg:#EDF0F5; --hero-dim:#98A1B2; --hero-accent:#D8B25C;
+  --hero-rule:rgba(237,240,245,.12);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:"Archivo","Segoe UI",system-ui,sans-serif;
+  font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:920px; margin:0 auto; padding:clamp(1.5rem,4vw,3.5rem) clamp(1rem,4vw,2rem) 5rem;}
+
+.top{display:flex; flex-direction:column; gap:.45rem; margin-bottom:1.75rem}
+.eyebrow{
+  margin:0; font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.72rem;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--brass);
+}
+.top h1{
+  margin:0; font-family:"Petrona",Georgia,serif; font-weight:700;
+  font-size:clamp(2.1rem,6vw,3.1rem); line-height:1.05; letter-spacing:-.015em;
+  text-wrap:balance;
+}
+.top p.sub{margin:0; color:var(--ink-2); max-width:56ch}
+
+.hero{
+  background:var(--hero-bg); color:var(--hero-fg); border-radius:4px;
+  padding:clamp(1.25rem,3.5vw,2rem); box-shadow:var(--shadow);
+  border-top:3px solid var(--hero-accent);
+  display:grid; grid-template-columns:auto 1fr; gap:clamp(1.25rem,4vw,2.5rem);
+  align-items:center; min-height:9rem;
+}
+.hero-count{display:flex; flex-direction:column; align-items:flex-start; line-height:.85}
+.hero-num{
+  font-family:"Petrona",Georgia,serif; font-weight:700; font-variant-numeric:tabular-nums;
+  font-size:clamp(3.4rem,13vw,6rem); letter-spacing:-.03em; color:var(--hero-accent);
+}
+.hero-unit{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.72rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--hero-dim); margin-top:.6rem;
+}
+.hero-label{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.7rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--hero-dim); margin:0 0 .5rem;
+}
+.hero-org{
+  font-family:"Petrona",Georgia,serif; font-weight:600; font-size:clamp(1.6rem,4.5vw,2.2rem);
+  margin:0; line-height:1.1; display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap;
+}
+.hero-org .fase{font-family:"Archivo",sans-serif}
+.hero-when{margin:.5rem 0 0; color:var(--hero-fg); opacity:.85}
+.hero-det{margin:.2rem 0 0; color:var(--hero-dim); font-style:italic; font-family:"Petrona",Georgia,serif}
+.hero-next{
+  margin-top:1.1rem; padding-top:.9rem; border-top:1px solid var(--hero-rule);
+  display:flex; flex-wrap:wrap; gap:.35rem 1.4rem; font-size:.86rem; color:var(--hero-dim);
+}
+.hero-next b{color:var(--hero-fg); font-weight:600}
+@media (max-width:560px){
+  .hero{grid-template-columns:1fr; gap:1rem}
+  .hero-count{flex-direction:row; align-items:baseline; gap:.7rem}
+  .hero-unit{margin-top:0}
+}
+
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--rule);
+  border:1px solid var(--rule); border-radius:3px; overflow:hidden; margin:1.25rem 0 2rem}
+.stat{background:var(--paper); padding:.9rem 1rem}
+.stat b{display:block; font-family:"Petrona",Georgia,serif; font-weight:700; font-size:1.7rem;
+  line-height:1.1; font-variant-numeric:tabular-nums}
+.stat span{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.66rem;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--ink-3)}
+@media (max-width:520px){.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:1/-1}}
+
+.viewbar{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  gap:.75rem; margin-bottom:1rem}
+.seg{display:inline-flex; background:var(--paper); border:1px solid var(--rule);
+  border-radius:999px; padding:2px}
+.seg button{font:inherit; font-size:.84rem; font-weight:500; border:0; background:transparent;
+  color:var(--ink-2); padding:.34rem .95rem; border-radius:999px; cursor:pointer;
+  transition:background .15s,color .15s}
+.seg button:hover{color:var(--ink)}
+.seg button.is-on{background:var(--ink); color:var(--ground)}
+.legend{margin:0; display:flex; gap:.9rem; font-size:.76rem; color:var(--ink-3); align-items:center}
+.legend i{display:inline-block; width:.62rem; height:.62rem; border-radius:2px;
+  margin-right:.32rem; vertical-align:-1px}
+.legend i.l1{background:var(--navy)}
+.legend i.l2{background:var(--toga)}
+.legend.is-off{display:none}
+
+.filters{display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1.1rem; margin-bottom:1.5rem}
+.fgroup{display:flex; flex-wrap:wrap; gap:.4rem}
+.chip{
+  font:inherit; font-size:.82rem; font-weight:500; cursor:pointer;
+  padding:.34rem .7rem; border-radius:999px; border:1px solid var(--rule);
+  background:var(--paper); color:var(--ink-2); transition:background .15s,color .15s,border-color .15s;
+}
+.chip:hover{border-color:var(--ink-3); color:var(--ink)}
+.chip.is-on{background:var(--ink); border-color:var(--ink); color:var(--ground)}
+.chip:focus-visible,select:focus-visible,input:focus-visible,.seg button:focus-visible,a:focus-visible{
+  outline:2px solid var(--brass); outline-offset:2px}
+select{
+  font:inherit; font-size:.82rem; padding:.34rem 1.6rem .34rem .7rem; border-radius:999px;
+  border:1px solid var(--rule); background:var(--paper); color:var(--ink-2); cursor:pointer;
+  appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+  background-position:calc(100% - 15px) 52%,calc(100% - 10px) 52%;
+  background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+}
+.tog{display:flex; align-items:center; gap:.4rem; font-size:.82rem; color:var(--ink-2); cursor:pointer}
+.tog input{accent-color:var(--toga); width:1rem; height:1rem; cursor:pointer}
+
+.month{display:grid; grid-template-columns:7.5rem 1fr; gap:0 1.5rem; margin-bottom:.5rem}
+.month-tag{
+  align-self:start; position:sticky; top:.75rem; padding-top:1.15rem;
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.7rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--ink-3); line-height:1.4;
+}
+.month-tag b{display:block; color:var(--ink-2); font-weight:500}
+.month-list{border-top:1px solid var(--rule); display:flex; flex-direction:column}
+@media (max-width:680px){
+  .month{grid-template-columns:1fr; gap:0}
+  .month-tag{position:static; padding:1.25rem 0 .4rem}
+}
+.ev{
+  display:grid; grid-template-columns:3.6rem 1fr auto; gap:0 1.1rem; align-items:center;
+  padding:.85rem .25rem; border-bottom:1px solid var(--rule-soft);
+}
+.ev-date{text-align:center; line-height:1}
+.ev-day{font-family:"Petrona",Georgia,serif; font-weight:700; font-size:1.45rem;
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em; display:block}
+.ev-mo{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.62rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3); display:block; margin-top:.28rem}
+.ev-org{margin:0; font-size:1.02rem; font-weight:600; display:flex; align-items:center;
+  gap:.55rem; flex-wrap:wrap}
+.ev-det{margin:.12rem 0 0; font-size:.85rem; color:var(--ink-2); font-family:"Petrona",Georgia,serif;
+  font-style:italic}
+.ev-when{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.7rem; letter-spacing:.05em;
+  color:var(--ink-3); white-space:nowrap; text-align:right}
+.fase{
+  font-size:.68rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+  padding:.16rem .48rem; border-radius:2px; white-space:nowrap;
+}
+.f1{background:var(--navy-soft); color:var(--navy)}
+.f2{background:var(--toga-soft); color:var(--toga)}
+.ev.is-past{opacity:.42}
+.ev.is-now{background:var(--toga-soft); border-radius:3px}
+.ev.is-now .ev-when{color:var(--toga); font-weight:500}
+.ev.is-soon .ev-when{color:var(--toga)}
+@media (max-width:520px){
+  .ev{grid-template-columns:3.2rem 1fr; gap:0 .9rem}
+  .ev-when{grid-column:2; text-align:left; margin-top:.25rem}
+}
+
+.cals{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:1.75rem}
+.cal{min-width:0}
+.cal-h{margin:0 0 .55rem; font-family:"Petrona",Georgia,serif; font-weight:600; font-size:1.15rem;
+  display:flex; align-items:baseline; gap:.45rem; text-transform:capitalize}
+.cal-h em{font-family:"IBM Plex Mono",ui-monospace,monospace; font-style:normal; font-size:.66rem;
+  letter-spacing:.12em; color:var(--ink-3); text-transform:none}
+.cal-h u{margin-left:auto; text-decoration:none; font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.62rem; letter-spacing:.06em; color:var(--toga); text-transform:none}
+.wk,.grid{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:3px}
+.wk{margin-bottom:3px}
+.wk span{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.58rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-3); text-align:center}
+.d{
+  min-height:3.15rem; border-radius:3px; padding:.24rem .26rem; background:var(--paper);
+  border:1px solid transparent; display:flex; flex-direction:column; gap:.14rem; overflow:hidden;
+}
+.d.pad{background:transparent; border-color:transparent; min-height:0}
+.d.wknd{background:var(--rule-soft)}
+.d .dn{font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.68rem;
+  font-variant-numeric:tabular-nums; color:var(--ink-3); line-height:1}
+.d.busy{background:var(--paper); border-color:var(--rule); box-shadow:var(--shadow)}
+.d.busy .dn{color:var(--ink); font-weight:500}
+.d.today{outline:2px solid var(--brass); outline-offset:-1px}
+.d.gone{opacity:.35}
+.d .ec{
+  font-size:.6rem; font-weight:600; line-height:1.25; border-radius:2px;
+  padding:.08rem .2rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.d .ec.e1{background:var(--navy-chip); color:var(--navy)}
+.d .ec.e2{background:var(--toga-chip); color:var(--toga)}
+@media (max-width:400px){
+  .d{min-height:2.8rem}
+  .d .ec{font-size:.55rem}
+}
+
+.empty,.carregando{padding:2.5rem 0; color:var(--ink-3); text-align:center;
+  font-family:"Petrona",Georgia,serif; font-style:italic}
+.aviso{
+  margin:0 0 1.5rem; padding:.8rem 1rem; border-radius:3px; font-size:.86rem;
+  background:var(--toga-soft); color:var(--toga); border:1px solid var(--toga-chip);
+}
+.aviso.is-off{display:none}
+
+.foot{margin-top:3rem; padding-top:1.25rem; border-top:1px solid var(--rule);
+  font-size:.82rem; color:var(--ink-3); display:flex; flex-wrap:wrap; gap:.4rem 1.5rem}
+.foot a{color:var(--ink-2)}
+.fonte b{font-weight:500; color:var(--ink-2)}
+
+@media (prefers-reduced-motion:no-preference){
+  .fade{animation:up .5s cubic-bezier(.22,.61,.36,1) both}
+  .fade:nth-child(2){animation-delay:.06s}
+  @keyframes up{from{opacity:0; transform:translateY(10px)}to{opacity:1; transform:none}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Justiça estadual · Justiça federal · Ministério Público</p>
+    <h1>Pauta de provas</h1>
+    <p class="sub">Todas as datas de 1ª e 2ª fase dos concursos que estamos acompanhando, em uma lista só.</p>
+  </header>
+
+  <section class="hero" id="hero" aria-live="polite">
+    <div><p class="hero-label">Carregando</p><h2 class="hero-org">Buscando as datas…</h2></div>
+  </section>
+
+  <div class="stats" id="stats" hidden></div>
+
+  <p class="aviso is-off" id="aviso"></p>
+
+  <div class="viewbar" hidden id="viewbar">
+    <div class="seg" role="group" aria-label="Modo de visualização">
+      <button type="button" data-view="cal" class="is-on">Calendário</button>
+      <button type="button" data-view="lista">Lista</button>
+    </div>
+    <p class="legend" id="legend"><span><i class="l1"></i>1ª fase</span><span><i class="l2"></i>2ª fase</span></p>
+  </div>
+
+  <div class="filters" hidden id="filters">
+    <div class="fgroup" id="tipos" role="group" aria-label="Filtrar por carreira"></div>
+    <div class="fgroup" role="group" aria-label="Filtrar por fase">
+      <button type="button" class="chip is-on" data-fase="all">Todas as fases</button>
+      <button type="button" class="chip" data-fase="1">1ª</button>
+      <button type="button" class="chip" data-fase="2">2ª</button>
+    </div>
+    <select id="org" aria-label="Filtrar por órgão"></select>
+    <label class="tog"><input type="checkbox" id="past"> Mostrar provas já realizadas</label>
+  </div>
+
+  <main id="pauta"><p class="carregando">Lendo a planilha…</p></main>
+
+  <footer class="foot">
+    <span class="fonte" id="fonte"></span>
+    <span><a href="https://paineisanalytics.cnj.jus.br/single/?appid=3cafc47d-286e-4266-8b5e-fdde06ef6254&amp;sheet=ePxgLM&amp;theme=Mix_Theme_Frame&amp;lang=pt-BR&amp;opt=ctxmenu,currsel" target="_blank" rel="noopener">Painel de concursos do CNJ</a></span>
+  </footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
