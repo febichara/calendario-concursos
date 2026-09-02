@@ -605,13 +605,16 @@
         var totalDias = new Date(yy, mm + 1, 0).getDate();
         var offset = new Date(yy, mm, 1).getDay();
         var fer = feriados(yy);
-        var noMes = 0, celulas = "";
+        /* conjuntos, não contadores: prova de dois dias aparece em duas
+           células e continua sendo uma prova só */
+        var provasMes = new Set(), prazosMes = new Set();
+        var celulas = "";
 
         for (var p = 0; p < offset; p++) celulas += '<div class="d pad"></div>';
         for (var dd = 1; dd <= totalDias; dd++) {
           var data = new Date(yy, mm, dd);
           var evs = mapa[yy + "." + mm + "." + dd] || [];
-          noMes += evs.length;
+          evs.forEach(function (i) { (i.prazo ? prazosMes : provasMes).add(i); });
           var wd = data.getDay();
           var feriado = fer[yy + "." + mm + "." + dd];
           var cls = "d";
@@ -623,9 +626,11 @@
           var marcas = "";
           evs.forEach(function (i) {
             if (i.prazo) {
+              /* só a sigla: o pontilhado já diz que é prazo, e "insc." fazia o
+                 texto ser cortado no quadradinho */
               marcas += '<span class="ec prazo" title="' +
                         esc(i.o + " — último dia de inscrição") + '">' +
-                        esc(i.o) + " insc.</span>";
+                        esc(i.o) + "</span>";
               return;
             }
             var titulo = i.o + " — " + i.f + "ª fase" + (i.d ? " (" + i.d + ")" : "") +
@@ -638,8 +643,14 @@
             '><span class="dn">' + dd + "</span>" + marcas + "</div>";
         }
 
+        var rotuloMes = provasMes.size
+          ? provasMes.size + (provasMes.size > 1 ? " provas" : " prova")
+          : (prazosMes.size
+              ? prazosMes.size + (prazosMes.size > 1 ? " inscrições" : " inscrição")
+              : "");
+
         html += '<section class="cal"><h3 class="cal-h">' + MESL[mm] + " <em>" + yy + "</em>" +
-          (noMes ? "<u>" + noMes + (noMes > 1 ? " provas" : " prova") + "</u>" : "") + "</h3>" +
+          (rotuloMes ? "<u>" + rotuloMes + "</u>" : "") + "</h3>" +
           '<div class="wk">' + SEM.map(function (s) { return "<span>" + s + "</span>"; }).join("") +
           '</div><div class="grid">' + celulas + "</div></section>";
         atual++;

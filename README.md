@@ -46,9 +46,13 @@ aparece sozinho nos filtros.
 
 **Prazo de inscrição.** A aba aceita uma coluna opcional chamada
 `INSCRIÇÃO ATÉ` (qualquer título contendo "inscri" serve, com ou sem acento).
-Preenchida, o último dia de inscrição vira uma marcação própria no calendário:
-**contorno vazado**, escrito `TJXX insc.`, em vez do bloco sólido das provas —
-para não confundir dia de prova com dia de perder o prazo.
+Preenchida, o último dia de inscrição vira uma marcação de **contorno
+pontilhado** no calendário, contra o bloco sólido das provas — para não
+confundir dia de prova com dia de perder o prazo. A marcação traz só a sigla; o
+"último dia de inscrição" aparece ao passar o mouse.
+
+O cabeçalho de cada mês conta apenas provas ("2 provas"), e diz "1 inscrição"
+quando o mês só tem prazo. Prova de dois dias conta como uma.
 
 O prazo pertence ao concurso, não à fase. Se você repetir o mesmo valor nas
 linhas de 1ª e 2ª fase, vira uma marcação só. Ele não conta em "provas pela
