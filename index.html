@@ -16,8 +16,8 @@
   --rule:#D6DBE4; --rule-soft:#E5E9EF;
   --toga:#7E1F2E; --toga-soft:rgba(126,31,46,.10); --toga-chip:rgba(126,31,46,.14);
   --navy:#1E3C74; --navy-soft:rgba(30,60,116,.10); --navy-chip:rgba(30,60,116,.14);
-  --brass:#8E7222;
-  --hero-bg:#151A24; --hero-fg:#F2F4F8; --hero-dim:#98A1B2; --hero-accent:#C79E3C;
+  --acento:#0E6F63;
+  --hero-bg:#151A24; --hero-fg:#F2F4F8; --hero-dim:#98A1B2; --hero-accent:#5CC9B4;
   --hero-rule:rgba(242,244,248,.14);
   --shadow:0 1px 2px rgba(20,26,38,.05),0 10px 28px -16px rgba(20,26,38,.30);
 }
@@ -27,8 +27,8 @@
     --rule:#28303E; --rule-soft:#1C2430;
     --toga:#DE7482; --toga-soft:rgba(222,116,130,.14); --toga-chip:rgba(222,116,130,.20);
     --navy:#7FA5E8; --navy-soft:rgba(127,165,232,.14); --navy-chip:rgba(127,165,232,.20);
-    --brass:#D8B25C;
-    --hero-bg:#1B2230; --hero-fg:#EDF0F5; --hero-dim:#98A1B2; --hero-accent:#D8B25C;
+    --acento:#4FC0AC;
+    --hero-bg:#1B2230; --hero-fg:#EDF0F5; --hero-dim:#98A1B2; --hero-accent:#5CC9B4;
     --hero-rule:rgba(237,240,245,.12);
     --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -16px rgba(0,0,0,.7);
   }
@@ -38,8 +38,8 @@
   --rule:#28303E; --rule-soft:#1C2430;
   --toga:#DE7482; --toga-soft:rgba(222,116,130,.14); --toga-chip:rgba(222,116,130,.20);
   --navy:#7FA5E8; --navy-soft:rgba(127,165,232,.14); --navy-chip:rgba(127,165,232,.20);
-  --brass:#D8B25C;
-  --hero-bg:#1B2230; --hero-fg:#EDF0F5; --hero-dim:#98A1B2; --hero-accent:#D8B25C;
+  --acento:#4FC0AC;
+  --hero-bg:#1B2230; --hero-fg:#EDF0F5; --hero-dim:#98A1B2; --hero-accent:#5CC9B4;
   --hero-rule:rgba(237,240,245,.12);
   --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 28px -16px rgba(0,0,0,.7);
 }
@@ -52,18 +52,6 @@ body{
   font-size:16px; line-height:1.5; -webkit-font-smoothing:antialiased;
 }
 .wrap{max-width:920px; margin:0 auto; padding:clamp(1.5rem,4vw,3.5rem) clamp(1rem,4vw,2rem) 5rem;}
-
-.top{display:flex; flex-direction:column; gap:.45rem; margin-bottom:1.75rem}
-.eyebrow{
-  margin:0; font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:.72rem;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--brass);
-}
-.top h1{
-  margin:0; font-family:"Petrona",Georgia,serif; font-weight:700;
-  font-size:clamp(2.1rem,6vw,3.1rem); line-height:1.05; letter-spacing:-.015em;
-  text-wrap:balance;
-}
-.top p.sub{margin:0; color:var(--ink-2); max-width:56ch}
 
 .hero{
   background:var(--hero-bg); color:var(--hero-fg); border-radius:4px;
@@ -127,6 +115,9 @@ body{
 .legend i.l1{background:var(--navy)}
 .legend i.l2{background:var(--toga)}
 .legend.is-off{display:none}
+/* asterisco de "ainda não consta no painel do CNJ" */
+.semcnj{font-weight:700; cursor:help}
+.legend .semcnj{margin-right:.3rem; color:var(--ink-2)}
 
 .filters{display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1.1rem; margin-bottom:1.5rem}
 .fgroup{display:flex; flex-wrap:wrap; gap:.4rem}
@@ -138,7 +129,7 @@ body{
 .chip:hover{border-color:var(--ink-3); color:var(--ink)}
 .chip.is-on{background:var(--ink); border-color:var(--ink); color:var(--ground)}
 .chip:focus-visible,select:focus-visible,input:focus-visible,.seg button:focus-visible,a:focus-visible{
-  outline:2px solid var(--brass); outline-offset:2px}
+  outline:2px solid var(--acento); outline-offset:2px}
 select{
   font:inherit; font-size:.82rem; padding:.34rem 1.6rem .34rem .7rem; border-radius:999px;
   border:1px solid var(--rule); background:var(--paper); color:var(--ink-2); cursor:pointer;
@@ -214,7 +205,7 @@ select{
   font-variant-numeric:tabular-nums; color:var(--ink-3); line-height:1}
 .d.busy{background:var(--paper); border-color:var(--rule); box-shadow:var(--shadow)}
 .d.busy .dn{color:var(--ink); font-weight:500}
-.d.today{outline:2px solid var(--brass); outline-offset:-1px}
+.d.today{outline:2px solid var(--acento); outline-offset:-1px}
 .d.gone{opacity:.35}
 .d .ec{
   font-size:.6rem; font-weight:600; line-height:1.25; border-radius:2px;
@@ -249,12 +240,6 @@ select{
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <p class="eyebrow">Justiça estadual · Justiça federal · Ministério Público</p>
-    <h1>Pauta de provas</h1>
-    <p class="sub">Todas as datas de 1ª e 2ª fase dos concursos que estamos acompanhando, em uma lista só.</p>
-  </header>
-
   <section class="hero" id="hero" aria-live="polite">
     <div><p class="hero-label">Carregando</p><h2 class="hero-org">Buscando as datas…</h2></div>
   </section>
@@ -268,7 +253,7 @@ select{
       <button type="button" data-view="cal" class="is-on">Calendário</button>
       <button type="button" data-view="lista">Lista</button>
     </div>
-    <p class="legend" id="legend"><span><i class="l1"></i>1ª fase</span><span><i class="l2"></i>2ª fase</span></p>
+    <p class="legend" id="legend"><span><i class="l1"></i>1ª fase</span><span><i class="l2"></i>2ª fase</span><span id="legenda-cnj" hidden><b class="semcnj">*</b> fora do painel do CNJ</span></p>
   </div>
 
   <div class="filters" hidden id="filters">

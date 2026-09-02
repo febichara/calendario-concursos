@@ -12,6 +12,12 @@
   var CSV = "https://docs.google.com/spreadsheets/d/" + PLANILHA +
             "/export?format=csv&gid=" + GID;
   var COPIA = "dados/concursos.json";
+  /* Leitura do painel do CNJ que o robô guarda no repositório. Serve para
+     marcar quais provas de magistratura ainda não constam lá. */
+  var CNJ = "dados/cnj.json";
+  var COLUNAS_CNJ = ["Prova objetiva", "2º Etapa início", "2º Etapa fim",
+                     "3º Etapa início", "3º Etapa fim",
+                     "4º Etapa início", "4º Etapa fim"];
 
   var MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
   var MESL = ["janeiro","fevereiro","março","abril","maio","junho",
@@ -89,6 +95,43 @@
     return m ? +m[1] : 1;
   }
 
+  function isoDe(d) {
+    function p(n) { return String(n).padStart(2, "0"); }
+    return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate());
+  }
+
+  /* { "TJPE|2026-09-27": true } com todas as datas de prova que o painel do CNJ
+     conhece. Devolve null quando não deu para ler o arquivo — nesse caso
+     ninguém é marcado, porque marcar todo mundo seria pior que não marcar. */
+  function indexarCNJ(cnj) {
+    if (!cnj || !cnj.abas) return null;
+    var set = {};
+    Object.keys(cnj.abas).forEach(function (aba) {
+      (cnj.abas[aba] || []).forEach(function (c) {
+        COLUNAS_CNJ.forEach(function (col) {
+          var p = lerData(c[col]);
+          if (p) set[c.sigla + "|" + isoDe(p.s)] = true;
+        });
+      });
+    });
+    return set;
+  }
+
+  /* Só magistratura entra na conferência: o painel do CNJ não cobre MP nem
+     Defensoria, então marcá-los seria alarme falso garantido. */
+  function marcarCNJ(itens, set) {
+    if (!set) return;
+    itens.forEach(function (i) {
+      if (i.tipo !== "TJ" && i.tipo !== "TRF") return;
+      var achou = false;
+      for (var c = new Date(i.s.getTime()); c <= i.e && !achou;
+           c = new Date(c.getFullYear(), c.getMonth(), c.getDate() + 1)) {
+        if (set[i.o + "|" + isoDe(c)]) achou = true;
+      }
+      i.foraDoCNJ = !achou;
+    });
+  }
+
   function classificar(org) {
     if (/^TRF/i.test(org)) return "TRF";
     if (/^MP/i.test(org)) return "MP";
@@ -161,6 +204,13 @@
     });
   }
 
+  function doCNJ() {
+    return fetch(CNJ, { cache: "no-store" }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).catch(function () { return null; });
+  }
+
   function daCopia() {
     return fetch(COPIA, { cache: "no-store" }).then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
@@ -198,11 +248,19 @@
   }
   function faseTag(f) { return '<span class="fase f' + f + '">' + f + "ª fase</span>"; }
 
+  var AVISO_CNJ = "Ainda não consta no painel do CNJ";
+  function nomeOrg(i) {
+    return esc(i.o) + (i.foraDoCNJ
+      ? '<span class="semcnj" title="' + AVISO_CNJ + '">*</span>' : "");
+  }
+
   /* ---------------- desenho ---------------- */
 
-  function iniciar(dados) {
+  function iniciar(dados, cnj) {
     var pronto = montar(dados.linhas);
     var items = pronto.itens;
+    var setCNJ = indexarCNJ(cnj);
+    marcarCNJ(items, setCNJ);
 
     var hero = document.getElementById("hero");
     var pauta = document.getElementById("pauta");
@@ -233,7 +291,7 @@
     if (futuros.length) {
       var n = futuros[0];
       var seq = futuros.slice(1, 4).map(function (i) {
-        return "<span><b>" + esc(i.o) + "</b> " + i.f + "ª · " +
+        return "<span><b>" + nomeOrg(i) + "</b> " + i.f + "ª · " +
                i.s.getDate() + "/" + MES[i.s.getMonth()] + "</span>";
       }).join("");
       var num = n.status === "now" ? "agora" : (n.dias === 0 ? "hoje" : n.dias);
@@ -242,7 +300,7 @@
         '<div class="hero-count"><span class="hero-num">' + num + '</span>' +
         '<span class="hero-unit">' + unit + "</span></div>" +
         '<div><p class="hero-label">Próxima prova</p>' +
-        '<h2 class="hero-org">' + esc(n.o) + " " + faseTag(n.f) + "</h2>" +
+        '<h2 class="hero-org">' + nomeOrg(n) + " " + faseTag(n.f) + "</h2>" +
         (n.d ? '<p class="hero-det">' + esc(n.d) + "</p>" : "") +
         '<p class="hero-when">' + dataLonga(n) + "</p>" +
         (seq ? '<div class="hero-next">' + seq + "</div>" : "") + "</div>";
@@ -279,6 +337,8 @@
 
     document.getElementById("viewbar").hidden = false;
     document.getElementById("filters").hidden = false;
+    /* a legenda do asterisco só faz sentido se conseguimos ler o painel */
+    document.getElementById("legenda-cnj").hidden = !setCNJ;
 
     /* estado */
     var state = { view: "cal", tipo: "all", fase: "all", org: "all", past: false };
@@ -348,7 +408,7 @@
         html += '<article class="' + cls + '">' +
           '<div class="ev-date"><span class="ev-day">' + dia + '</span>' +
           '<span class="ev-mo">' + mo + "</span></div>" +
-          '<div><p class="ev-org">' + esc(i.o) + " " + faseTag(i.f) + "</p>" +
+          '<div><p class="ev-org">' + nomeOrg(i) + " " + faseTag(i.f) + "</p>" +
           (i.d ? '<p class="ev-det">' + esc(i.d) + "</p>" : "") + "</div>" +
           '<div class="ev-when">' + quando(i) + "</div></article>";
       });
@@ -399,9 +459,10 @@
           if (data.getTime() === HOJE.getTime()) cls += " today";
           var marcas = "";
           evs.forEach(function (i) {
-            var titulo = i.o + " — " + i.f + "ª fase" + (i.d ? " (" + i.d + ")" : "");
+            var titulo = i.o + " — " + i.f + "ª fase" + (i.d ? " (" + i.d + ")" : "") +
+                         (i.foraDoCNJ ? " · " + AVISO_CNJ.toLowerCase() : "");
             marcas += '<span class="ec e' + i.f + '" title="' + esc(titulo) + '">' +
-                      esc(i.o) + "</span>";
+                      esc(i.o) + (i.foraDoCNJ ? "*" : "") + "</span>";
           });
           celulas += '<div class="' + cls + '"><span class="dn">' + dd + "</span>" + marcas + "</div>";
         }
@@ -441,7 +502,11 @@
 
     var fonte = document.getElementById("fonte");
     if (dados.origem === "planilha") {
-      fonte.innerHTML = "Lendo a planilha <b>ao vivo</b> — editou lá, aparece aqui no próximo refresh.";
+      fonte.innerHTML = "Lendo a planilha <b>ao vivo</b> — editou lá, aparece aqui no próximo refresh." +
+        (cnj && cnj.atualizadoEm
+          ? " Painel do CNJ conferido em <b>" +
+            new Date(cnj.atualizadoEm).toLocaleDateString("pt-BR") + "</b>."
+          : "");
     } else {
       var q = dados.quando ? new Date(dados.quando) : null;
       fonte.innerHTML = "A planilha não respondeu; mostrando a cópia de <b>" +
@@ -452,7 +517,10 @@
     render();
   }
 
-  daPlanilha().catch(function () { return daCopia(); }).then(iniciar).catch(function (e) {
+  Promise.all([
+    daPlanilha().catch(function () { return daCopia(); }),
+    doCNJ()
+  ]).then(function (r) { iniciar(r[0], r[1]); }).catch(function (e) {
     document.getElementById("hero").innerHTML =
       '<div><p class="hero-label">Erro</p><h2 class="hero-org">Não consegui ler as datas</h2>' +
       '<p class="hero-when">Nem a planilha nem a cópia local responderam.</p></div>';
