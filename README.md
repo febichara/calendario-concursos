@@ -163,3 +163,15 @@ Duas coisas que fazem essa frequência ser segura:
 
 Se o repositório ficar 60 dias sem atividade sua, o GitHub pausa workflows
 agendados e te manda um e-mail. É só clicar em reativar na aba Actions.
+
+### Forçar um relatório completo
+
+O robô não repete aviso já dado — ele guarda o que já falou em
+`dados/avisados.json`. Para fazê-lo relatar tudo de novo do zero, apague esse
+arquivo e faça commit:
+
+```bash
+git rm dados/avisados.json && git commit -m "vigia: zerar avisos" && git push
+```
+
+Na execução seguinte ele reavalia todas as divergências como se fossem novas.
