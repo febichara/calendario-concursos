@@ -1,90 +1,31 @@
 # Pauta de provas
 
-Calendário das provas de concursos da magistratura, MP e Defensoria, para
-compartilhar com os amigos.
+Calendário das provas de concursos da magistratura, Ministério Público e
+Defensoria, para compartilhar com os amigos.
 
-O calendário é a **união de duas fontes**: a magistratura vem do painel do CNJ,
-e a planilha do Google entra ao vivo com o que o painel não cobre — magistratura
-que ainda não foi registrada lá e as outras carreiras. Onde as duas falam da
-mesma prova de magistratura, vale a data do CNJ — a linha da planilha sai do
-calendário e a divergência é avisada por issue, que só você vê.
+O calendário é a **união de duas fontes**:
 
-- **Site**: `index.html` + `app.js`. É estático, não tem servidor nem banco.
-- **Planilha**: a aba `INSERIR NOVAS DATAS AQUI`. Serve para o que o CNJ não
-  tem: MP, Defensoria e magistratura ainda não registrada no painel. Você edita
-  lá, dá refresh no site, mudou. Não precisa republicar nada.
-- **Robô**: `.github/workflows/vigia-cnj.yml` roda às 6h, 13h e 19h (Brasília),
-  lê o painel do CNJ e **abre uma issue** quando encontra algo novo. A issue
-  chega no seu e-mail. Ele nunca escreve na planilha.
+- **Magistratura** vem do [painel de concursos do CNJ][painel] (Resolução 75/2009).
+  Você não digita nada: quando o concurso entra no painel, aparece no calendário.
+- **A planilha do Google** cobre o resto — MP, Defensoria e magistratura cujo
+  edital saiu mas o CNJ ainda não registrou.
 
----
+Um robô confere o painel três vezes por dia e abre uma issue no repositório
+quando encontra novidade ou divergência. Ele **nunca escreve na planilha**.
 
-## Instalação (uma vez só)
-
-### 1. Criar o repositório
-
-No GitHub, crie um repositório **público** chamado `calendario-concursos`.
-Público importa por dois motivos: o GitHub Pages é gratuito só em repositório
-público na conta free, e os minutos de Actions também.
-
-Não marque nenhuma opção de inicialização (sem README, sem .gitignore).
-
-### 2. Subir os arquivos
-
-Esta pasta já é um repositório Git, já tem o primeiro commit e já aponta para
-`github.com/febichara/calendario-concursos`. Então basta:
-
-```bash
-git push -u origin main
-```
-
-Na primeira vez o Windows abre uma janela do navegador pedindo login no GitHub.
-É o Credential Manager; ele guarda a credencial para as próximas.
-
-Daí em diante, para publicar qualquer alteração:
-
-```bash
-git add . && git commit -m "o que mudou" && git push
-```
-
-### 3. Liberar o robô a escrever
-
-**Settings → Actions → General → Workflow permissions** → marque
-**Read and write permissions** → Save.
-
-Sem isso o robô não consegue abrir a issue nem guardar a leitura do dia.
-
-### 4. Ligar o site
-
-**Settings → Pages → Build and deployment → Source: Deploy from a branch**,
-escolha `main` e a pasta `/ (root)` → Save.
-
-Um minuto depois o site está no ar em:
-
-```
-https://febichara.github.io/calendario-concursos/
-```
-
-Esse é o link para mandar para os amigos.
-
-### 5. Testar o robô agora, sem esperar amanhã
-
-**Actions → Vigia do CNJ → Run workflow**. Na primeira execução ele avisa que é
-a primeira leitura e lista o que está fora de sincronia com a planilha. Da
-segunda em diante, só fala quando muda alguma coisa.
+[painel]: https://paineisanalytics.cnj.jus.br/single/?appid=3cafc47d-286e-4266-8b5e-fdde06ef6254&sheet=ePxgLM&theme=Mix_Theme_Frame&lang=pt-BR&opt=ctxmenu,currsel
 
 ---
 
 ## No dia a dia
 
-**Magistratura você não precisa mais digitar.** Assim que o concurso entra no
-painel do CNJ, ele aparece no calendário sozinho, na próxima passada do robô.
+**Magistratura você não digita.** Entra sozinha pelo painel.
 
-**Escreva na planilha** o que o painel não cobre: MP, Defensoria e magistratura
-cujo edital saiu mas o CNJ ainda não registrou (é o caso do TJPE). Essas linhas
-aparecem com asterisco até o painel confirmar.
+**Escreva na planilha** (aba `INSERIR NOVAS DATAS AQUI`) o que o painel não
+cobre: MP, Defensoria e magistratura ainda não registrada no CNJ. O site lê a
+planilha a cada visita — editou, deu refresh, mudou.
 
-Formatos de data que ele entende na coluna DATA:
+Formatos aceitos na coluna DATA:
 
 | Escrito assim | Vira |
 | --- | --- |
@@ -94,18 +35,104 @@ Formatos de data que ele entende na coluna DATA:
 | `31/05 e 01/06/2026` | intervalo virando o mês |
 | `11/04/2027 e 12/04/2027` | ano repetido nos dois lados |
 
-Se alguma linha estiver num formato que ele não reconhece, o site mostra um
-aviso vermelho no topo dizendo exatamente qual linha ficou de fora — em vez de
-sumir com ela em silêncio.
+Linha em formato não reconhecido não some em silêncio: o site mostra um aviso
+no topo dizendo qual ficou de fora.
 
-A coluna CONCURSO define a cor e o filtro pela sigla: `TJ…`, `TRF…`, `MP…`,
+A coluna CONCURSO define a cor e o filtro pela sigla — `TJ…`, `TRF…`, `MP…`,
 `DP…`. Quando você lançar a primeira data de Defensoria, o botão "Defensoria"
 aparece sozinho nos filtros.
 
-**Quando chegar uma issue do robô**: ela diz o que o CNJ tem e a planilha não
-(e vice-versa). Você decide o que fazer e ajusta a planilha na mão. Depois é só
-fechar a issue. O robô não repete um aviso que já deu — só volta a falar
-daquilo se a situação mudar.
+**O asterisco.** `TJPE*` quer dizer "prova de magistratura que o painel do CNJ
+ainda não registrou". É o único sinal de procedência que o site mostra, porque
+quase tudo vem do CNJ — marcar a origem do que é normal não informaria nada. MP
+e Defensoria nunca recebem asterisco: o painel não cobre essas carreiras.
+
+---
+
+## Quem manda quando as fontes discordam
+
+Para cada órgão e fase o robô monta dois conjuntos de datas — o do CNJ e o da
+planilha — e classifica:
+
+| Situação | Como aparece na issue |
+| --- | --- |
+| CNJ tem data, planilha não tem nada nessa fase | *No painel do CNJ, mas não na planilha* |
+| Os dois têm datas e elas não batem | *Conflito: as duas fontes discordam*, com os dois lados |
+| Planilha tem data futura, o painel não registrou nenhuma | *Na planilha, ainda não no painel* |
+| A sigla não aparece em nenhuma aba do painel | *Concursos que o painel não lista* |
+
+**No calendário, conflito de magistratura resolve a favor do CNJ**: a linha da
+planilha sai da tela e vale a data do painel. Isso evita mostrar a mesma prova
+duas vezes em datas diferentes, o que confundiria quem só abre o link. Você não
+perde a informação — a divergência vai para a issue, que só você vê.
+
+Cada aviso é dado **uma vez só**. Quando a divergência se resolve, o robô a
+anuncia por nome em *Resolvido desde a última leitura*, então você tem
+confirmação do que entrou em ordem, não só reclamação.
+
+---
+
+## Com que frequência cada coisa é lida
+
+- **O site lê a planilha a cada visita.** Sem cache, sem agendamento.
+- **O robô lê tudo 3x ao dia** (6h, 13h e 19h de Brasília; o `cron` do workflow
+  está em UTC). É o que atualiza o `dados/cnj.json`, então uma mudança feita
+  *pelo CNJ* leva até 8h para refletir no site.
+
+Três disparos em vez de um também cobrem o caso de o cron do GitHub atrasar ou
+pular uma execução em horário de pico, o que acontece. Não custa nada:
+repositório público tem minutos de Actions ilimitados.
+
+Se o repositório ficar 60 dias sem atividade sua, o GitHub pausa workflows
+agendados e manda um e-mail. Um clique na aba Actions reativa.
+
+---
+
+## Publicação
+
+O site é estático — não tem servidor nem banco. Qualquer hospedagem de arquivos
+serve, e hoje ele está em duas:
+
+- **GitHub Pages**: https://febichara.github.io/calendario-concursos/
+- **Cloudflare Pages**, conectado ao mesmo repositório, publicando a cada push.
+  Em *Custom domains* dá para apontar um subdomínio do `cw790.com.br`, que já
+  está na conta: fica um link melhor de compartilhar e não custa nada a mais.
+
+Para publicar qualquer alteração:
+
+```bash
+git add . && git commit -m "o que mudou" && git push
+```
+
+Como o site não tem etapa de build, a configuração na Cloudflare é:
+
+| Campo | Valor |
+| --- | --- |
+| Framework preset | None |
+| Build command | *(vazio)* |
+| Build output directory | `/` |
+
+---
+
+## O botão "Reportar erro"
+
+No rodapé há um botão que abre uma caixa para o visitante avisar sobre data
+errada ou prova faltando.
+
+Como o site é estático, quem entrega o e-mail é um serviço externo. Está
+preparado para o [Web3Forms](https://web3forms.com) — grátis e sem criar conta:
+você informa seu e-mail no site deles e recebe uma chave. Cole a chave em
+`CHAVE_FORMULARIO`, no topo do `app.js`, e faça commit.
+
+**Enquanto a chave estiver vazia o botão continua funcionando**: em vez de
+enviar sozinho, abre o programa de e-mail do visitante com a mensagem já
+escrita. Funciona bem no celular; no computador depende de a pessoa ter um
+cliente de e-mail configurado. Se o envio pelo Web3Forms falhar por qualquer
+motivo, ele também cai nesse caminho — a mensagem não se perde.
+
+O endereço de destino fica no `app.js`, que é público. Ele já aparece no
+histórico de commits de qualquer forma, por ser o e-mail de autoria do Git;
+configurar a chave do Web3Forms é o jeito de tirá-lo da página.
 
 ---
 
@@ -119,14 +146,13 @@ npm install && npx playwright install chromium
 npm run tudo
 ```
 
-- `npm run planilha` — baixa a planilha para `dados/concursos.json` (a cópia de
-  segurança que o site usa se o Google estiver fora do ar).
+- `npm run planilha` — baixa a planilha para `dados/concursos.json`.
 - `npm run cnj` — lê o painel do CNJ com um Chromium headless.
 - `npm run vigia` — compara tudo e escreve `relatorio.md`.
 
-Para ver o site localmente, qualquer servidor estático serve. Abrir o
-`index.html` com duplo clique **não** funciona: o navegador bloqueia a leitura
-da planilha em `file://`.
+Para ver o site localmente, use um servidor estático. Abrir o `index.html` com
+duplo clique **não** funciona: o navegador bloqueia a leitura da planilha em
+`file://`.
 
 ```bash
 npx --yes serve .
@@ -134,84 +160,50 @@ npx --yes serve .
 
 ---
 
-## Mexer na configuração
+## Mapa dos arquivos
 
-Quase tudo que é específico está em `scripts/config.mjs`: o id da planilha, o
-`gid` da aba, o endereço do painel do CNJ, quais abas do painel ler e o
-de-para de nome de tribunal para sigla.
-
-O site tem as mesmas três constantes no topo do `app.js` (`PLANILHA`, `ABA`,
-`GID`), porque roda no navegador e não enxerga o `config.mjs`. Se trocar a
-planilha, troque nos dois lugares.
-
-### Duas armadilhas que já custaram caro
-
-**Não use o endpoint `gviz` do Google para ler a planilha.** Ele adivinha o tipo
-da coluna: como a coluna DATA é quase toda data de verdade, ele devolve **vazio**
-nas células escritas à mão como `02 e 03/08/2026` — e some com todas as 2ªs
-fases sem dar erro nenhum. Por isso aqui usamos `/export?format=csv&gid=…`, que
-entrega o texto exatamente como está na tela.
-
-**No painel do CNJ, "Preparando" não é uma aba.** As abas de verdade são só
-`Em andamento` e `Finalizados` (`li.lui-tab`); "Preparando" é um botão da barra
-de seleção. Pedir por ele em `ABAS_CNJ` faz o robô registrar um aviso no
-relatório em vez de ler a tabela errada achando que trocou de aba.
-
-### Quem manda quando as fontes discordam
-
-A planilha é sempre a fonte da verdade do que aparece no site. O robô **nunca
-escreve** nela: ele só compara e avisa. Para cada órgão e fase ele monta dois
-conjuntos de datas — o que o CNJ diz e o que a planilha diz — e classifica:
-
-| Situação | Como aparece no aviso |
+| Arquivo | O que faz |
 | --- | --- |
-| CNJ tem data, planilha não tem nada nessa fase | *No painel do CNJ, mas não na planilha* |
-| Os dois têm datas e elas não batem | *Conflito: as duas fontes discordam*, com os dois lados |
-| Planilha tem data futura, o painel não registrou nenhuma | *Na planilha, ainda não no painel* |
-| A sigla não aparece em nenhuma aba do painel | *Concursos que o painel não lista* |
+| `index.html` | Estrutura, estilos e a caixa de "reportar erro". |
+| `app.js` | Lê planilha e `cnj.json`, junta as fontes, desenha calendário e lista. |
+| `scripts/config.mjs` | Id da planilha, `gid`, endereço do painel, abas e siglas. |
+| `scripts/planilha.mjs` | Baixa a planilha em CSV. |
+| `scripts/cnj.mjs` | Lê o painel do CNJ com Playwright. |
+| `scripts/datas.mjs` | Interpreta as datas escritas à mão. |
+| `scripts/vigia.mjs` | Compara as fontes e escreve o relatório. |
+| `scripts/salvar.mjs` | Grava JSON só quando o conteúdo muda. |
+| `dados/concursos.json` | Cópia da planilha; o site usa se o Google cair. |
+| `dados/cnj.json` | Última leitura do painel; alimenta o site e a comparação. |
+| `dados/avisados.json` | Divergências já avisadas, para não repetir. |
 
-Cada aviso é dado **uma vez só**. Quando você corrige a planilha (ou o CNJ se
-acerta), a divergência some da lista e o robô a anuncia por nome em
-*Resolvido desde a última leitura* — então você tem confirmação do que entrou em
-ordem, não só do que está errado.
-
-No site, a mesma informação aparece como asterisco: `TJPE*` quer dizer "essa
-prova de magistratura ainda não consta no painel do CNJ". MP e Defensoria nunca
-recebem asterisco, porque o painel não cobre essas carreiras.
-
-### Com que frequência cada coisa é lida
-
-- **O site lê a planilha a cada visita.** Não é agendado e não tem cache: você
-  edita a planilha, dá refresh, mudou.
-- **O robô lê tudo 3x ao dia.** É o que atualiza o `dados/cnj.json`, então uma
-  mudança feita *pelo CNJ* leva até 8h para refletir no asterisco.
-
-### Frequência do robô
-
-O `cron` do workflow está em `0 9,16,22 * * *` (UTC), ou seja 6h, 13h e 19h de
-Brasília. Rodar mais vezes não custa nada — repositório público tem minutos de
-Actions ilimitados — e não gera e-mail a mais, porque a issue só é aberta quando
-o relatório tem novidade.
-
-Duas coisas que fazem essa frequência ser segura:
-
-- Os arquivos de `dados/` só são regravados quando o **conteúdo** muda, não a
-  cada execução (ver `scripts/salvar.mjs`). Sem isso, cada rodada viraria um
-  commit e uma reconstrução do site à toa.
-- Uma divergência já avisada não é avisada de novo enquanto continuar valendo
-  (ver `dados/avisados.json`).
-
-Se o repositório ficar 60 dias sem atividade sua, o GitHub pausa workflows
-agendados e te manda um e-mail. É só clicar em reativar na aba Actions.
+O `app.js` repete três constantes do `config.mjs` (`PLANILHA`, `ABA`, `GID`)
+porque roda no navegador e não enxerga os módulos. Se trocar de planilha, troque
+nos dois lugares.
 
 ### Forçar um relatório completo
 
-O robô não repete aviso já dado — ele guarda o que já falou em
-`dados/avisados.json`. Para fazê-lo relatar tudo de novo do zero, apague esse
-arquivo e faça commit:
+Para o robô reavaliar todas as divergências como se fossem novas:
 
 ```bash
 git rm dados/avisados.json && git commit -m "vigia: zerar avisos" && git push
 ```
 
-Na execução seguinte ele reavalia todas as divergências como se fossem novas.
+---
+
+## Três armadilhas que já custaram caro
+
+**Não use o endpoint `gviz` do Google para ler a planilha.** Ele adivinha o tipo
+da coluna: como a coluna DATA é quase toda data de verdade, devolve **vazio** nas
+células escritas à mão como `02 e 03/08/2026` — e some com todas as 2ªs fases sem
+dar erro nenhum. Por isso usamos `/export?format=csv&gid=…`, que entrega o texto
+exatamente como está na tela.
+
+**No painel do CNJ, "Preparando" não é uma aba.** As abas de verdade são só
+`Em andamento` e `Finalizados` (`li.lui-tab`); "Preparando" é um botão da barra
+de seleção. Pedir por ele em `ABAS_CNJ` faz o robô registrar um aviso no
+relatório, em vez de ler a tabela errada achando que trocou de aba.
+
+**Nunca grave o carimbo de hora sem comparar o conteúdo.** Os arquivos de
+`dados/` só são reescritos quando o que está dentro muda (`scripts/salvar.mjs`).
+Sem isso, cada uma das três execuções diárias viraria um commit e uma
+reconstrução do site à toa — mais de mil commits inúteis por ano.

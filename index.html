@@ -231,6 +231,50 @@ select{
 .foot a{color:var(--ink-2)}
 .fonte b{font-weight:500; color:var(--ink-2)}
 
+/* botão e caixa de "reportar erro" */
+.reportar{
+  font:inherit; font-size:.82rem; font-weight:500; cursor:pointer; color:var(--acento);
+  background:none; border:0; padding:0; text-decoration:underline;
+  text-underline-offset:3px; text-decoration-thickness:1px;
+}
+.reportar:hover{color:var(--ink)}
+#reporte{
+  border:1px solid var(--rule); border-radius:5px; padding:0; color:var(--ink);
+  background:var(--paper); box-shadow:var(--shadow); max-width:34rem; width:calc(100% - 2rem);
+}
+#reporte::backdrop{background:rgba(10,14,20,.55)}
+#reporte form{display:flex; flex-direction:column; gap:.7rem; padding:clamp(1.1rem,4vw,1.6rem)}
+#reporte h2{
+  margin:0; font-family:"Petrona",Georgia,serif; font-weight:600; font-size:1.4rem;
+  line-height:1.15; text-wrap:balance;
+}
+#reporte .dica{margin:0; color:var(--ink-2); font-size:.88rem}
+#reporte label{
+  display:block; margin-bottom:.25rem; font-family:"IBM Plex Mono",ui-monospace,monospace;
+  font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3);
+}
+#reporte label em{font-style:normal; text-transform:none; letter-spacing:0}
+#reporte textarea,#reporte input{
+  font:inherit; font-size:.92rem; width:100%; color:var(--ink); background:var(--ground);
+  border:1px solid var(--rule); border-radius:3px; padding:.5rem .6rem; resize:vertical;
+}
+#reporte textarea:focus-visible,#reporte input:focus-visible{
+  outline:2px solid var(--acento); outline-offset:1px; border-color:transparent;
+}
+#reporte .dupla{display:grid; grid-template-columns:1fr 1fr; gap:.7rem}
+@media (max-width:480px){#reporte .dupla{grid-template-columns:1fr}}
+#reporte .recado{margin:0; font-size:.85rem; color:var(--acento); min-height:1.2em}
+#reporte .recado.ruim{color:var(--toga)}
+#reporte menu{display:flex; justify-content:flex-end; gap:.5rem; margin:.2rem 0 0; padding:0}
+#reporte menu button{
+  font:inherit; font-size:.86rem; font-weight:500; cursor:pointer; padding:.45rem 1rem;
+  border-radius:999px; border:1px solid var(--rule); background:var(--paper); color:var(--ink-2);
+}
+#reporte menu button:hover{border-color:var(--ink-3); color:var(--ink)}
+#reporte menu .primario{background:var(--ink); border-color:var(--ink); color:var(--ground)}
+#reporte menu .primario:hover{color:var(--ground); opacity:.9}
+#reporte menu button[disabled]{opacity:.5; cursor:progress}
+
 @media (prefers-reduced-motion:no-preference){
   .fade{animation:up .5s cubic-bezier(.22,.61,.36,1) both}
   .fade:nth-child(2){animation-delay:.06s}
@@ -271,9 +315,39 @@ select{
 
   <footer class="foot">
     <span class="fonte" id="fonte"></span>
+    <button type="button" class="reportar" id="abrirReporte">Reportar erro ou pedir inclusão</button>
     <span><a href="https://paineisanalytics.cnj.jus.br/single/?appid=3cafc47d-286e-4266-8b5e-fdde06ef6254&amp;sheet=ePxgLM&amp;theme=Mix_Theme_Frame&amp;lang=pt-BR&amp;opt=ctxmenu,currsel" target="_blank" rel="noopener">Painel de concursos do CNJ</a></span>
   </footer>
 </div>
+
+<dialog id="reporte" aria-labelledby="reporteTitulo">
+  <form method="dialog" id="formReporte">
+    <h2 id="reporteTitulo">Achou um erro? Falta alguma prova?</h2>
+    <p class="dica">Data errada, concurso que não está aqui, qualquer coisa. Escreva à vontade.</p>
+
+    <label for="mensagem">O que você quer avisar</label>
+    <textarea id="mensagem" name="mensagem" rows="5" required
+              placeholder="Ex.: a 2ª fase do TJXX mudou para 10 e 11/05, saiu no edital de ontem."></textarea>
+
+    <div class="dupla">
+      <div>
+        <label for="quem">Seu nome <em>(opcional)</em></label>
+        <input type="text" id="quem" name="quem" autocomplete="name">
+      </div>
+      <div>
+        <label for="contato">E-mail para resposta <em>(opcional)</em></label>
+        <input type="email" id="contato" name="contato" autocomplete="email">
+      </div>
+    </div>
+
+    <p class="recado" id="recadoReporte" role="status"></p>
+
+    <menu>
+      <button type="button" class="secundario" id="fecharReporte">Cancelar</button>
+      <button type="submit" class="primario" id="enviarReporte">Enviar</button>
+    </menu>
+  </form>
+</dialog>
 
 <script src="app.js"></script>
 </body>

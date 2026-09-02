@@ -19,6 +19,15 @@
                      "3º Etapa início", "3º Etapa fim",
                      "4º Etapa início", "4º Etapa fim"];
 
+  /* Formulário de "reportar erro". O site é estático, então quem entrega o
+     e-mail é um serviço externo: o Web3Forms, que é grátis e não exige conta —
+     você informa seu e-mail em https://web3forms.com e recebe a chave por lá.
+     Cole a chave aqui. Enquanto ela estiver vazia, o botão continua funcionando:
+     abre o programa de e-mail do visitante com a mensagem já escrita. */
+  var CHAVE_FORMULARIO = "";
+  var DESTINO = ["felipevlbichara", "gmail.com"].join("@");
+  var ASSUNTO = "Pauta de provas — recado do site";
+
   var MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
   var MESL = ["janeiro","fevereiro","março","abril","maio","junho",
               "julho","agosto","setembro","outubro","novembro","dezembro"];
@@ -577,6 +586,84 @@
     sincronizar();
     render();
   }
+
+  /* ---------------- reportar erro ---------------- */
+
+  function ligarReporte() {
+    var caixa = document.getElementById("reporte");
+    var form = document.getElementById("formReporte");
+    var recado = document.getElementById("recadoReporte");
+    var enviar = document.getElementById("enviarReporte");
+    if (!caixa || !form) return;
+
+    function avisar(texto, ruim) {
+      recado.textContent = texto;
+      recado.classList.toggle("ruim", !!ruim);
+    }
+
+    document.getElementById("abrirReporte").addEventListener("click", function () {
+      avisar("");
+      form.reset();
+      caixa.showModal();
+      document.getElementById("mensagem").focus();
+    });
+    document.getElementById("fecharReporte").addEventListener("click", function () {
+      caixa.close();
+    });
+
+    /* Sem chave configurada: monta um e-mail com o texto e deixa o visitante
+       enviar pelo programa dele. Não é tão bom, mas nunca perde a mensagem. */
+    function porEmail(dados) {
+      var corpo = dados.mensagem +
+        "\n\n---\n" + (dados.quem ? "De: " + dados.quem + "\n" : "") +
+        (dados.contato ? "Responder para: " + dados.contato + "\n" : "");
+      window.location.href = "mailto:" + DESTINO +
+        "?subject=" + encodeURIComponent(ASSUNTO) +
+        "&body=" + encodeURIComponent(corpo);
+    }
+
+    form.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var dados = {
+        mensagem: document.getElementById("mensagem").value.trim(),
+        quem: document.getElementById("quem").value.trim(),
+        contato: document.getElementById("contato").value.trim()
+      };
+      if (!dados.mensagem) { avisar("Escreva a mensagem antes de enviar.", true); return; }
+
+      if (!CHAVE_FORMULARIO) {
+        porEmail(dados);
+        caixa.close();
+        return;
+      }
+
+      enviar.disabled = true;
+      avisar("Enviando…");
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: CHAVE_FORMULARIO,
+          subject: ASSUNTO,
+          from_name: dados.quem || "Visitante do site",
+          replyto: dados.contato || undefined,
+          message: dados.mensagem
+        })
+      }).then(function (r) {
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      }).then(function (res) {
+        if (!res.success) throw new Error(res.message || "recusado");
+        avisar("Recebido. Obrigado!");
+        setTimeout(function () { caixa.close(); }, 1200);
+      }).catch(function () {
+        avisar("Não consegui enviar daqui. Abrindo seu e-mail…", true);
+        setTimeout(function () { porEmail(dados); caixa.close(); }, 1200);
+      }).then(function () { enviar.disabled = false; });
+    });
+  }
+
+  ligarReporte();
 
   Promise.all([
     daPlanilha().catch(function () { return daCopia(); }),
