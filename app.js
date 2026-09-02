@@ -71,6 +71,12 @@
     m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if (m) { var d2 = new Date(+m[3], +m[2] - 1, +m[1]); return { s: d2, e: d2 }; }
 
+    /* 11/04/2027 e 12/04/2027 — ano repetido nos dois lados */
+    m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s*(?:e|a|at[ée]|à|-|–)\s*(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (m) {
+      return { s: new Date(+m[3], +m[2] - 1, +m[1]), e: new Date(+m[6], +m[5] - 1, +m[4]) };
+    }
+
     /* 31/05 e 01/06/2026 — atravessa o mês */
     m = t.match(/^(\d{1,2})\/(\d{1,2})\s*(?:e|a|at[ée]|à|-|–)\s*(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if (m) {
@@ -140,6 +146,20 @@
     return "OUTRO";
   }
 
+  function criarItem(org, fase, detalhe, s, e) {
+    return {
+      o: org, f: fase, d: detalhe, s: s, e: e,
+      multi: s.getTime() !== e.getTime(),
+      tipo: classificar(org),
+      dias: Math.round((s - HOJE) / DAY),
+      status: e < HOJE ? "past" : (s <= HOJE ? "now" : "next")
+    };
+  }
+
+  function ordenar(itens) {
+    return itens.sort(function (a, b) { return (a.s - b.s) || a.o.localeCompare(b.o); });
+  }
+
   /* linhas cruas -> itens prontos; devolve também o que não deu pra entender */
   function montar(linhas) {
     var itens = [], recusadas = [];
@@ -148,21 +168,44 @@
       if (!org) return;
       var per = lerData(l.data);
       if (!per) { recusadas.push((l.data || "(vazio)") + " — " + org); return; }
-      var dias = Math.round((per.s - HOJE) / DAY);
-      itens.push({
-        o: org,
-        f: lerFase(l.fase),
-        d: String(l.detalhe || "").trim(),
-        s: per.s,
-        e: per.e,
-        multi: per.s.getTime() !== per.e.getTime(),
-        tipo: classificar(org),
-        dias: dias,
-        status: per.e < HOJE ? "past" : (per.s <= HOJE ? "now" : "next")
-      });
+      itens.push(criarItem(org, lerFase(l.fase), String(l.detalhe || "").trim(),
+                           per.s, per.e));
     });
-    itens.sort(function (a, b) { return (a.s - b.s) || a.o.localeCompare(b.o); });
-    return { itens: itens, recusadas: recusadas };
+    return { itens: ordenar(itens), recusadas: recusadas };
+  }
+
+  /* Provas de magistratura direto do painel do CNJ. Só a aba de concursos em
+     andamento, e só 1ª e 2ª fase — que é o que a planilha acompanha. */
+  function itensDoCNJ(cnj) {
+    if (!cnj || !cnj.abas) return [];
+    var itens = [];
+    (cnj.abas["Em andamento"] || []).forEach(function (c) {
+      var p1 = lerData(c["Prova objetiva"]);
+      if (p1) itens.push(criarItem(c.sigla, 1, "", p1.s, p1.s));
+      var ini = lerData(c["2º Etapa início"]);
+      if (ini) {
+        var fim = lerData(c["2º Etapa fim"]);
+        itens.push(criarItem(c.sigla, 2, "", ini.s, fim ? fim.s : ini.s));
+      }
+    });
+    return itens;
+  }
+
+  /* A planilha manda: onde as duas fontes falam da mesma prova, fica a linha
+     dela (que pode ter detalhe escrito por você). Do CNJ entra só o que a
+     planilha não cobre. O painel repete concursos com Ids diferentes, então
+     também removemos duplicata interna dele. */
+  function juntar(daPlanilha, doCnj) {
+    var visto = {};
+    daPlanilha.forEach(function (i) { visto[i.o + "|" + isoDe(i.s)] = true; });
+    var extras = [];
+    doCnj.forEach(function (i) {
+      var chave = i.o + "|" + isoDe(i.s);
+      if (visto[chave]) return;
+      visto[chave] = true;
+      extras.push(i);
+    });
+    return { itens: ordenar(daPlanilha.concat(extras)), doCNJ: extras.length };
   }
 
   /* A aba tem duas linhas de cabeçalho. Achamos a linha de títulos pelo texto e
@@ -258,9 +301,12 @@
 
   function iniciar(dados, cnj) {
     var pronto = montar(dados.linhas);
-    var items = pronto.itens;
     var setCNJ = indexarCNJ(cnj);
-    marcarCNJ(items, setCNJ);
+    /* o asterisco é conferido só nas linhas da planilha: o que vem do painel,
+       por definição, está no painel */
+    marcarCNJ(pronto.itens, setCNJ);
+    var juncao = juntar(pronto.itens, itensDoCNJ(cnj));
+    var items = juncao.itens;
 
     var hero = document.getElementById("hero");
     var pauta = document.getElementById("pauta");
@@ -502,11 +548,13 @@
 
     var fonte = document.getElementById("fonte");
     if (dados.origem === "planilha") {
-      fonte.innerHTML = "Lendo a planilha <b>ao vivo</b> — editou lá, aparece aqui no próximo refresh." +
+      fonte.innerHTML = "Magistratura vem do <b>painel do CNJ</b>" +
         (cnj && cnj.atualizadoEm
-          ? " Painel do CNJ conferido em <b>" +
-            new Date(cnj.atualizadoEm).toLocaleDateString("pt-BR") + "</b>."
-          : "");
+          ? " (lido em " + new Date(cnj.atualizadoEm).toLocaleDateString("pt-BR") + ")"
+          : "") +
+        "; a <b>planilha</b> entra ao vivo com o que falta lá e com as outras carreiras." +
+        (juncao.doCNJ ? " " + juncao.doCNJ + " prova" + (juncao.doCNJ > 1 ? "s vieram" : " veio") +
+          " só do painel." : "");
     } else {
       var q = dados.quando ? new Date(dados.quando) : null;
       fonte.innerHTML = "A planilha não respondeu; mostrando a cópia de <b>" +

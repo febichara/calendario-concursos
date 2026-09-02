@@ -12,6 +12,12 @@ export function lerData(bruto) {
   m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (m) { const d = new Date(+m[3], +m[2] - 1, +m[1]); return { s: d, e: d }; }
 
+  /* 11/04/2027 e 12/04/2027 — ano repetido nos dois lados */
+  m = t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s*(?:e|a|at[ée]|à|-|–)\s*(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) {
+    return { s: new Date(+m[3], +m[2] - 1, +m[1]), e: new Date(+m[6], +m[5] - 1, +m[4]) };
+  }
+
   m = t.match(/^(\d{1,2})\/(\d{1,2})\s*(?:e|a|at[ée]|à|-|–)\s*(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
   if (m) {
     const ano = +m[5], mi = +m[2] - 1, mf = +m[4] - 1;

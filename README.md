@@ -1,11 +1,16 @@
 # Pauta de provas
 
 Calendário das provas de concursos da magistratura, MP e Defensoria, para
-compartilhar com os amigos. O site lê a planilha do Google **ao vivo**, e um robô
-confere o painel do CNJ todo dia de manhã e avisa quando aparece novidade.
+compartilhar com os amigos.
+
+O calendário é a **união de duas fontes**: a magistratura vem do painel do CNJ,
+e a planilha do Google entra ao vivo com o que o painel não cobre — magistratura
+que ainda não foi registrada lá e as outras carreiras. Onde as duas falam da
+mesma prova, vale a planilha.
 
 - **Site**: `index.html` + `app.js`. É estático, não tem servidor nem banco.
-- **Fonte dos dados**: a aba `INSERIR NOVAS DATAS AQUI` da planilha. Você edita
+- **Planilha**: a aba `INSERIR NOVAS DATAS AQUI`. Serve para o que o CNJ não
+  tem: MP, Defensoria e magistratura ainda não registrada no painel. Você edita
   lá, dá refresh no site, mudou. Não precisa republicar nada.
 - **Robô**: `.github/workflows/vigia-cnj.yml` roda às 6h, 13h e 19h (Brasília),
   lê o painel do CNJ e **abre uma issue** quando encontra algo novo. A issue
@@ -71,8 +76,12 @@ segunda em diante, só fala quando muda alguma coisa.
 
 ## No dia a dia
 
-**Data nova de MP, Defensoria ou de qualquer concurso**: escreva na planilha,
-na aba `INSERIR NOVAS DATAS AQUI`. O site pega sozinho.
+**Magistratura você não precisa mais digitar.** Assim que o concurso entra no
+painel do CNJ, ele aparece no calendário sozinho, na próxima passada do robô.
+
+**Escreva na planilha** o que o painel não cobre: MP, Defensoria e magistratura
+cujo edital saiu mas o CNJ ainda não registrou (é o caso do TJPE). Essas linhas
+aparecem com asterisco até o painel confirmar.
 
 Formatos de data que ele entende na coluna DATA:
 
@@ -82,6 +91,7 @@ Formatos de data que ele entende na coluna DATA:
 | `02 e 03/08/2026` | dois dias no mesmo mês |
 | `21 a 26/07/2026` | intervalo no mesmo mês |
 | `31/05 e 01/06/2026` | intervalo virando o mês |
+| `11/04/2027 e 12/04/2027` | ano repetido nos dois lados |
 
 Se alguma linha estiver num formato que ele não reconhece, o site mostra um
 aviso vermelho no topo dizendo exatamente qual linha ficou de fora — em vez de
