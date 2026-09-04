@@ -1,5 +1,5 @@
 {
-  "atualizadoEm": "2026-09-02T20:05:20.922Z",
+  "atualizadoEm": "2026-09-04T18:48:57.849Z",
   "abas": {
     "Em andamento": [
       {
@@ -79,44 +79,6 @@
         "sigla": "TJSP"
       },
       {
-        "Id": "554227",
-        "Dat. entrada": "24/11/2025 10:27:45",
-        "Tribunal": "Tribunal de Justiça do Estado do Paraná",
-        "Concurso": "Concurso Público para Ingresso na Carreira da Magistratura do Estado do Paraná 2025/2026",
-        "Dat. publicação edital": "24/11/2025",
-        "Acompanhar edital": "clique aqui...",
-        "Enam substitui 1º etapa": "Não",
-        "Prova objetiva": "22/02/2026",
-        "2º Etapa início": "10/05/2026",
-        "2º Etapa fim": "11/05/2026",
-        "3º Etapa início": "18/09/2026",
-        "3º Etapa fim": "10/11/2026",
-        "4º Etapa início": "11/11/2026",
-        "4º Etapa fim": "09/12/2026",
-        "5º Etapa início": "11/11/2026",
-        "5º Etapa fim": "30/12/2026",
-        "sigla": "TJPR"
-      },
-      {
-        "Id": "554228",
-        "Dat. entrada": "24/11/2025 10:29:22",
-        "Tribunal": "Tribunal de Justiça do Estado do Paraná",
-        "Concurso": "Concurso Público para Ingresso na Carreira da Magistratura do Estado do Paraná 2025/2026",
-        "Dat. publicação edital": "24/11/2025",
-        "Acompanhar edital": "clique aqui...",
-        "Enam substitui 1º etapa": "Não",
-        "Prova objetiva": "22/02/2026",
-        "2º Etapa início": "10/05/2026",
-        "2º Etapa fim": "11/05/2026",
-        "3º Etapa início": "18/09/2026",
-        "3º Etapa fim": "10/11/2026",
-        "4º Etapa início": "11/11/2026",
-        "4º Etapa fim": "09/12/2026",
-        "5º Etapa início": "11/11/2026",
-        "5º Etapa fim": "30/12/2026",
-        "sigla": "TJPR"
-      },
-      {
         "Id": "554309",
         "Dat. entrada": "27/04/2026 13:18:49",
         "Tribunal": "Tribunal de Justiça do Estado do Rio de Janeiro",
@@ -134,6 +96,25 @@
         "5º Etapa início": "-",
         "5º Etapa fim": "-",
         "sigla": "TJRJ"
+      },
+      {
+        "Id": "554227",
+        "Dat. entrada": "04/09/2026 13:46:47",
+        "Tribunal": "Tribunal de Justiça do Estado do Paraná",
+        "Concurso": "Concurso Público para Ingresso na Carreira da Magistratura",
+        "Dat. publicação edital": "24/11/2025",
+        "Acompanhar edital": "clique aqui...",
+        "Enam substitui 1º etapa": "Não",
+        "Prova objetiva": "22/02/2026",
+        "2º Etapa início": "10/05/2026",
+        "2º Etapa fim": "11/05/2026",
+        "3º Etapa início": "15/09/2026",
+        "3º Etapa fim": "19/10/2026",
+        "4º Etapa início": "08/11/2026",
+        "4º Etapa fim": "23/11/2026",
+        "5º Etapa início": "23/11/2026",
+        "5º Etapa fim": "01/12/2026",
+        "sigla": "TJPR"
       },
       {
         "Id": "555198",
