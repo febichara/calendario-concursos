@@ -1,5 +1,5 @@
 {
-  "atualizadoEm": "2026-09-08T19:16:07.904Z",
+  "atualizadoEm": "2026-09-09T13:24:34.437Z",
   "abas": {
     "Em andamento": [
       {
@@ -79,25 +79,6 @@
         "sigla": "TJSP"
       },
       {
-        "Id": "554309",
-        "Dat. entrada": "27/04/2026 13:18:49",
-        "Tribunal": "Tribunal de Justiça do Estado do Rio de Janeiro",
-        "Concurso": "LI CONCURSO PARA INGRESSO NA MAGISTRATURA DE CARREIRA DO TRIBUNAL DE JUSTIÇA DO ESTADO DO RIO DE JANEIRO",
-        "Dat. publicação edital": "24/11/2025",
-        "Acompanhar edital": "clique aqui...",
-        "Enam substitui 1º etapa": "Não",
-        "Prova objetiva": "15/03/2026",
-        "2º Etapa início": "12/07/2026",
-        "2º Etapa fim": "13/07/2026",
-        "3º Etapa início": "-",
-        "3º Etapa fim": "-",
-        "4º Etapa início": "-",
-        "4º Etapa fim": "-",
-        "5º Etapa início": "-",
-        "5º Etapa fim": "-",
-        "sigla": "TJRJ"
-      },
-      {
         "Id": "554227",
         "Dat. entrada": "04/09/2026 13:46:47",
         "Tribunal": "Tribunal de Justiça do Estado do Paraná",
@@ -115,6 +96,25 @@
         "5º Etapa início": "23/11/2026",
         "5º Etapa fim": "01/12/2026",
         "sigla": "TJPR"
+      },
+      {
+        "Id": "554309",
+        "Dat. entrada": "08/09/2026 17:19:53",
+        "Tribunal": "Tribunal de Justiça do Estado do Rio de Janeiro",
+        "Concurso": "LI Concurso para ingresso na Magistratura de Carreira do Tribunal de Justiça do Estado do Rio de Janeiro",
+        "Dat. publicação edital": "24/11/2025",
+        "Acompanhar edital": "clique aqui...",
+        "Enam substitui 1º etapa": "Não",
+        "Prova objetiva": "15/03/2026",
+        "2º Etapa início": "12/07/2026",
+        "2º Etapa fim": "13/07/2026",
+        "3º Etapa início": "23/09/2026",
+        "3º Etapa fim": "14/10/2026",
+        "4º Etapa início": "03/11/2026",
+        "4º Etapa fim": "13/11/2026",
+        "5º Etapa início": "17/11/2026",
+        "5º Etapa fim": "17/11/2026",
+        "sigla": "TJRJ"
       },
       {
         "Id": "555198",
