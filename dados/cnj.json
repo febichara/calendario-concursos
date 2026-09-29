@@ -1,5 +1,5 @@
 {
-  "atualizadoEm": "2026-09-24T19:48:02.562Z",
+  "atualizadoEm": "2026-09-29T01:28:52.027Z",
   "abas": {
     "Em andamento": [
       {
@@ -267,6 +267,25 @@
         "5º Etapa início": "31/01/2028",
         "5º Etapa fim": "17/02/2028",
         "sigla": "TJAP"
+      },
+      {
+        "Id": "648920",
+        "Dat. entrada": "28/09/2026 16:25:42",
+        "Tribunal": "Tribunal de Justiça do Estado de Santa Catarina",
+        "Concurso": "Concurso Público para Ingresso na Carreira da Magistratura do Estado de Santa Catarina - 2026-2027",
+        "Dat. publicação edital": "13/10/2026",
+        "Acompanhar edital": "clique aqui...",
+        "Enam substitui 1º etapa": "Não",
+        "Prova objetiva": "31/01/2027",
+        "2º Etapa início": "18/04/2027",
+        "2º Etapa fim": "19/04/2027",
+        "3º Etapa início": "13/09/2027",
+        "3º Etapa fim": "01/10/2027",
+        "4º Etapa início": "-",
+        "4º Etapa fim": "-",
+        "5º Etapa início": "-",
+        "5º Etapa fim": "-",
+        "sigla": "TJSC"
       }
     ],
     "Finalizados": [
