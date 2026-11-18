@@ -1,5 +1,5 @@
 {
-  "atualizadoEm": "2026-11-18T03:19:11.284Z",
+  "atualizadoEm": "2026-11-18T17:47:30.702Z",
   "abas": {
     "Em andamento": [
       {
@@ -60,25 +60,6 @@
         "sigla": "TRF6"
       },
       {
-        "Id": "531001",
-        "Dat. entrada": "17/11/2026 19:16:29",
-        "Tribunal": "Tribunal de Justiça do Estado de São Paulo",
-        "Concurso": "192º Concurso de Provas e Títulos para ingresso na Magistratura - TJSP",
-        "Dat. publicação edital": "15/09/2025",
-        "Acompanhar edital": "clique aqui...",
-        "Enam substitui 1º etapa": "Não",
-        "Prova objetiva": "30/11/2025",
-        "2º Etapa início": "01/03/2026",
-        "2º Etapa fim": "02/03/2026",
-        "3º Etapa início": "19/06/2026",
-        "3º Etapa fim": "13/07/2026",
-        "4º Etapa início": "21/09/2026",
-        "4º Etapa fim": "06/11/2026",
-        "5º Etapa início": "11/11/2026",
-        "5º Etapa fim": "17/11/2026",
-        "sigla": "TJSP"
-      },
-      {
         "Id": "554227",
         "Dat. entrada": "04/09/2026 13:46:47",
         "Tribunal": "Tribunal de Justiça do Estado do Paraná",
@@ -96,25 +77,6 @@
         "5º Etapa início": "23/11/2026",
         "5º Etapa fim": "01/12/2026",
         "sigla": "TJPR"
-      },
-      {
-        "Id": "554309",
-        "Dat. entrada": "21/10/2026 12:49:57",
-        "Tribunal": "Tribunal de Justiça do Estado do Rio de Janeiro",
-        "Concurso": "LI Concurso para ingresso na Magistratura de Carreira do Tribunal de Justiça do Estado do Rio de Janeiro",
-        "Dat. publicação edital": "24/11/2025",
-        "Acompanhar edital": "clique aqui...",
-        "Enam substitui 1º etapa": "Não",
-        "Prova objetiva": "15/03/2026",
-        "2º Etapa início": "12/07/2026",
-        "2º Etapa fim": "13/07/2026",
-        "3º Etapa início": "23/09/2026",
-        "3º Etapa fim": "14/10/2026",
-        "4º Etapa início": "09/11/2026",
-        "4º Etapa fim": "13/11/2026",
-        "5º Etapa início": "17/11/2026",
-        "5º Etapa fim": "17/11/2026",
-        "sigla": "TJRJ"
       },
       {
         "Id": "555198",
@@ -497,6 +459,44 @@
         "5º Etapa início": "09/04/2026",
         "5º Etapa fim": "01/09/2026",
         "sigla": "TJCE"
+      },
+      {
+        "Id": "531001",
+        "Dat. entrada": "17/11/2026 19:16:29",
+        "Tribunal": "Tribunal de Justiça do Estado de São Paulo",
+        "Concurso": "192º Concurso de Provas e Títulos para ingresso na Magistratura - TJSP",
+        "Dat. publicação edital": "15/09/2025",
+        "Acompanhar edital": "clique aqui...",
+        "Enam substitui 1º etapa": "Não",
+        "Prova objetiva": "30/11/2025",
+        "2º Etapa início": "01/03/2026",
+        "2º Etapa fim": "02/03/2026",
+        "3º Etapa início": "19/06/2026",
+        "3º Etapa fim": "13/07/2026",
+        "4º Etapa início": "21/09/2026",
+        "4º Etapa fim": "06/11/2026",
+        "5º Etapa início": "11/11/2026",
+        "5º Etapa fim": "17/11/2026",
+        "sigla": "TJSP"
+      },
+      {
+        "Id": "554309",
+        "Dat. entrada": "21/10/2026 12:49:57",
+        "Tribunal": "Tribunal de Justiça do Estado do Rio de Janeiro",
+        "Concurso": "LI Concurso para ingresso na Magistratura de Carreira do Tribunal de Justiça do Estado do Rio de Janeiro",
+        "Dat. publicação edital": "24/11/2025",
+        "Acompanhar edital": "clique aqui...",
+        "Enam substitui 1º etapa": "Não",
+        "Prova objetiva": "15/03/2026",
+        "2º Etapa início": "12/07/2026",
+        "2º Etapa fim": "13/07/2026",
+        "3º Etapa início": "23/09/2026",
+        "3º Etapa fim": "14/10/2026",
+        "4º Etapa início": "09/11/2026",
+        "4º Etapa fim": "13/11/2026",
+        "5º Etapa início": "17/11/2026",
+        "5º Etapa fim": "17/11/2026",
+        "sigla": "TJRJ"
       }
     ]
   },
